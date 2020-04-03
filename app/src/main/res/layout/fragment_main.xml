@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.PlaceholderFragment">
-    <ImageView
+   <!-- <ImageView
         android:id="@+id/iv_grid_background"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
@@ -47,6 +47,6 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical"/>
     </RelativeLayout>
-    </LinearLayout>
+    </LinearLayout>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

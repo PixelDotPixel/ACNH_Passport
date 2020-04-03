@@ -1,4 +1,4 @@
-package com.acnhcompanion.application;
+package com.acnhcompanion.application.Crafting;
 
 import android.content.Context;
 import android.text.SpannableString;
@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.acnhcompanion.application.Crafting.Recipes;
+import com.acnhcompanion.application.R;
 
 import java.util.List;
 

@@ -26,6 +26,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.graphics.Matrix;
 
+import com.acnhcompanion.application.Bugs.BugActivity;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -185,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         journalCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, Journal_Activity.class);
+                Intent intent = new Intent(MainActivity.this, BugActivity.class);
                 startActivity(intent);
             }
         });

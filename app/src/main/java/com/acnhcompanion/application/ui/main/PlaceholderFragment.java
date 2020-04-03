@@ -1,7 +1,7 @@
 package com.acnhcompanion.application.ui.main;
 
 import com.acnhcompanion.application.Crafting.Recipes;
-import com.acnhcompanion.application.CraftingAdapter;
+import com.acnhcompanion.application.Crafting.CraftingAdapter;
 import com.acnhcompanion.application.data.CritterDataViewModel;
 
 import android.app.AlertDialog;
