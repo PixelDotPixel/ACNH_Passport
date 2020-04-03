@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_bugs"
+        android:icon="@drawable/ic_caught"
+        android:title="Bugs" />
+    <item
+        android:id="@+id/navigation_fish"
+        android:icon="@drawable/ic_caught"
+        android:title="Fish" />
+    <item
+        android:id="@+id/navigation_crafting"
+        android:icon="@drawable/ic_caught"
+        android:title="Crafting" />
+</menu>

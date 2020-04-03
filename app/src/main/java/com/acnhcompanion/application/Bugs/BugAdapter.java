@@ -1,5 +1,6 @@
 package com.acnhcompanion.application.Bugs;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.util.Log;
@@ -18,6 +19,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import androidx.cardview.widget.CardView;
 
 import static android.content.ContentValues.TAG;
 
@@ -98,6 +101,7 @@ public class BugAdapter  extends BaseAdapter{
                 return true;
             }
         });
+        CardView cardView = view.findViewById(R.id.cv_grid_icon);
         ImageView tile = (ImageView) view.findViewById(R.id.icon);
         RelativeLayout missing = view.findViewById(R.id.linearLayout_missing);
         RelativeLayout present = view.findViewById(R.id.linearLayout);
@@ -124,6 +128,7 @@ public class BugAdapter  extends BaseAdapter{
             tile.setImageResource(bugs.get(i).imgID);
             missing.setVisibility(View.INVISIBLE);
             textView.setVisibility(View.INVISIBLE);
+            cardView.setCardBackgroundColor(Color.WHITE);
             if (!isCatchable(bugs.get(i).timeWindow, bugs.get(i).northernSeason)) {
                 ColorMatrix matrix = new ColorMatrix();
                 matrix.setSaturation(0);

@@ -1,5 +1,6 @@
 package com.acnhcompanion.application.Fish;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.util.Log;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import androidx.cardview.widget.CardView;
 
 import static android.content.ContentValues.TAG;
 
@@ -86,6 +89,7 @@ public class FishAdapter extends BaseAdapter{
         TextView textView = view.findViewById(R.id.missing_text);
         ImageView missingCheck = view.findViewById(R.id.imageView2_missing);
         ImageView presentCheck = view.findViewById(R.id.imageView2);
+        CardView cardView = view.findViewById(R.id.cv_grid_icon);
         if(fishes.get(i).imgID == R.drawable.missing_image_asset){
             present.setVisibility(View.INVISIBLE);
             tile.setVisibility(View.INVISIBLE);
@@ -106,6 +110,7 @@ public class FishAdapter extends BaseAdapter{
             tile.setImageResource(fishes.get(i).imgID);
             missing.setVisibility(View.INVISIBLE);
             textView.setVisibility(View.INVISIBLE);
+            cardView.setCardBackgroundColor(Color.WHITE);
             if (!isCatchable(fishes.get(i).timeWindow, fishes.get(i).northernSeason)) {
                 ColorMatrix matrix = new ColorMatrix();
                 matrix.setSaturation(0);
