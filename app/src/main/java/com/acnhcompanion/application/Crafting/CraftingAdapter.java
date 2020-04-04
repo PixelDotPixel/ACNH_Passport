@@ -3,6 +3,7 @@ package com.acnhcompanion.application.Crafting;
 import android.content.Context;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class CraftingAdapter extends RecyclerView.Adapter<CraftingAdapter.CraftingViewHolder> {
     Context context;
@@ -97,7 +100,24 @@ public class CraftingAdapter extends RecyclerView.Adapter<CraftingAdapter.Crafti
 
             craftableItemTitle.setText(spannableString);
             craftableItemTitle.setTextSize(20);
-            craftableItemDetails.setText(recipes.materialNames.replaceAll(",","\n"));
+            String[] materialNames = recipes.materialNames.split("\n");
+            String[] materialCounts = recipes.materialCounts.split(",");
+
+            /*Log.d(TAG, "bind Recipe: " + recipes.rName);
+            for (int i = 0; i < materialCounts.length; i++) {
+                Log.d(TAG, "bind material: " + materialCounts[i] + "\n");
+            }*/
+            String toBindMaterials = "";
+            for(int i = 0; i < materialNames.length; i++){
+                if(materialCounts.length > i){
+                    toBindMaterials += materialNames[i] +"(x" + materialCounts[i] + ")\n";
+                } else {
+                    toBindMaterials += materialNames[i] + "\n";
+                }
+
+            }
+
+            craftableItemDetails.setText(toBindMaterials);
         }
 
         @Override

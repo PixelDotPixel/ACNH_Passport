@@ -31,6 +31,7 @@ public class FishActivity extends AppCompatActivity implements FishAdapter.onFis
     ColorDrawable green;
     ColorDrawable tan;
     ColorDrawable blue;
+    ColorDrawable blueAccent;
 
     BottomNavigationView bottomNavigationView;
 
@@ -42,6 +43,7 @@ public class FishActivity extends AppCompatActivity implements FishAdapter.onFis
         green = new ColorDrawable(Color.parseColor("#96e3af"));
         tan = new ColorDrawable(Color.parseColor("#f4ebe6"));
         blue = new ColorDrawable(Color.parseColor("#c2ffff"));
+        blueAccent = new ColorDrawable(Color.parseColor("#00b2b3"));
         critterDataViewModel = new ViewModelProvider(
                 this,
                 new ViewModelProvider.AndroidViewModelFactory(getApplication())
@@ -60,6 +62,7 @@ public class FishActivity extends AppCompatActivity implements FishAdapter.onFis
         });
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setBackgroundColor(blueAccent.getColor());
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
