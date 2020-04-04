@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputFilter;
@@ -32,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -103,13 +105,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 android.app.AlertDialog dialog = builder.create();
                 dialog.show();
 
+
             }
         });
 
         cvCalander = findViewById(R.id.cv_smallCalander);
         cvCalander.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
+                DatePicker datePickerDialog = findViewById(R.id.dialog_date_date_picker);
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
                 final View customLayout = getLayoutInflater().inflate(R.layout.date_dialog, null);
                 builder.setView(customLayout);

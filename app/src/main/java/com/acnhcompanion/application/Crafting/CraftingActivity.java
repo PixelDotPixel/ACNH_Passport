@@ -28,6 +28,8 @@ public class CraftingActivity extends AppCompatActivity implements CraftingAdapt
     ColorDrawable green;
     ColorDrawable tan;
     ColorDrawable blue;
+    ColorDrawable tanAccent;
+
 
     BottomNavigationView bottomNavigationView;
 
@@ -39,6 +41,7 @@ public class CraftingActivity extends AppCompatActivity implements CraftingAdapt
         green = new ColorDrawable(Color.parseColor("#96e3af"));
         tan = new ColorDrawable(Color.parseColor("#f4ebe6"));
         blue = new ColorDrawable(Color.parseColor("#c2ffff"));
+        tanAccent = new ColorDrawable(Color.parseColor("#c29075"));
         critterDataViewModel = new ViewModelProvider(
                 this,
                 new ViewModelProvider.AndroidViewModelFactory(getApplication())
@@ -58,6 +61,7 @@ public class CraftingActivity extends AppCompatActivity implements CraftingAdapt
         });
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setBackgroundColor(tanAccent.getColor());
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

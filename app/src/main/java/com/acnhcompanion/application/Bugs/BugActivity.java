@@ -32,6 +32,7 @@ public class BugActivity extends AppCompatActivity implements BugAdapter.onBugCl
     ColorDrawable green;
     ColorDrawable tan;
     ColorDrawable blue;
+    ColorDrawable greenAccent;
 
     BottomNavigationView bottomNavigationView;
 
@@ -43,6 +44,7 @@ public class BugActivity extends AppCompatActivity implements BugAdapter.onBugCl
         green = new ColorDrawable(Color.parseColor("#96e3af"));
         tan = new ColorDrawable(Color.parseColor("#f4ebe6"));
         blue = new ColorDrawable(Color.parseColor("#c2ffff"));
+        greenAccent = new ColorDrawable(Color.parseColor("#217d3e"));
         critterDataViewModel = new ViewModelProvider(
                 this,
                 new ViewModelProvider.AndroidViewModelFactory(getApplication())
@@ -61,6 +63,7 @@ public class BugActivity extends AppCompatActivity implements BugAdapter.onBugCl
         });
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setBackgroundColor(greenAccent.getColor());
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
