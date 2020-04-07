@@ -18,11 +18,13 @@ public class Recipes implements Serializable {
     public String materialCounts;
     public boolean isCrafted;
     public String notes;
+    //public String category;
 
-    public Recipes(String rName, int IMGid, String materialNames, String materialCounts){
+    public Recipes(String rName, int IMGid, String materialNames, String materialCounts/*, String category*/){
         this.rName = rName;
         this.IMGid = IMGid;
         this.materialNames = materialNames;
         this.materialCounts = materialCounts;
+        //this.category = category;
     }
 }

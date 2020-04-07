@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteConstraintException;
 import com.acnhcompanion.application.Crafting.Materials;
 import com.acnhcompanion.application.Crafting.Recipes;
 import com.acnhcompanion.application.Bugs.Bug;
+import com.acnhcompanion.application.Fossils.Fossil;
 import com.acnhcompanion.application.ui.main.PlaceholderFragment;
 import com.acnhcompanion.application.Fish.Fish;
 
@@ -309,6 +310,80 @@ public class CritterDataRepo {
 
         @Override
         protected Void doInBackground(Materials... critterData){
+            try {
+                savedVillagerAsyncDao.delete(critterData[0]);
+            } catch (SQLiteConstraintException e){
+                Log.d(TAG, "doInBackground: ERROR with deleting CritterData");
+            }
+            return null;
+        }
+
+    }
+
+    public void insertFossilData(Fossil critterData){
+        new InsertAsyncTaskFossilData(savedVillagerDao).execute(critterData);
+    }
+
+    public void updateFossilData(Fossil critterData){
+        new UpdateAsyncTaskFossilData(savedVillagerDao).execute(critterData);
+    }
+
+    public void deleteFossilData(Fossil critterData){
+        new DeleteAsyncTaskFossilData(savedVillagerDao).execute(critterData);
+    }
+
+    public LiveData<List<Fossil>> getFossilData(){
+        return savedVillagerDao.getFossilData();
+    }
+
+    private static class InsertAsyncTaskFossilData extends AsyncTask<Fossil, Void, Void>{
+        private SavedVillagerDao savedVillagerAsyncDao;
+        private String TAG = PlaceholderFragment.class.getSimpleName();
+
+        InsertAsyncTaskFossilData(SavedVillagerDao savedVillagerDao){
+            savedVillagerAsyncDao = savedVillagerDao;
+        }
+
+        @Override
+        protected Void doInBackground(Fossil... critterData){
+            try {
+                savedVillagerAsyncDao.insert(critterData[0]);
+            } catch (SQLiteConstraintException e){
+                Log.d(TAG, "doInBackground: ERROR with inserting CritterData");
+            }
+            return null;
+        }
+    }
+
+    private static class UpdateAsyncTaskFossilData extends AsyncTask<Fossil, Void, Void>{
+        private SavedVillagerDao savedVillagerAsyncDao;
+        private String TAG = PlaceholderFragment.class.getSimpleName();
+
+        UpdateAsyncTaskFossilData(SavedVillagerDao savedVillagerDao){
+            savedVillagerAsyncDao = savedVillagerDao;
+        }
+
+        @Override
+        protected Void doInBackground(Fossil... critterData){
+            try {
+                savedVillagerAsyncDao.update(critterData[0]);
+            } catch (SQLiteConstraintException e){
+                Log.d(TAG, "doInBackground: ERROR with updating CritterData");
+            }
+            return null;
+        }
+    }
+
+    private static class DeleteAsyncTaskFossilData extends AsyncTask<Fossil, Void, Void>{
+        private SavedVillagerDao savedVillagerAsyncDao;
+        private String TAG = PlaceholderFragment.class.getSimpleName();
+
+        DeleteAsyncTaskFossilData(SavedVillagerDao savedVillagerDao) {
+            savedVillagerAsyncDao = savedVillagerDao;
+        }
+
+        @Override
+        protected Void doInBackground(Fossil... critterData){
             try {
                 savedVillagerAsyncDao.delete(critterData[0]);
             } catch (SQLiteConstraintException e){

@@ -2,6 +2,7 @@ package com.acnhcompanion.application.Fish;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.acnhcompanion.application.Bugs.BugActivity;
 import com.acnhcompanion.application.Crafting.CraftingActivity;
+import com.acnhcompanion.application.Fossils.FossilActivity;
 import com.acnhcompanion.application.R;
 import com.acnhcompanion.application.data.CritterDataViewModel;
 import com.acnhcompanion.application.ui.main.PlaceholderFragment;
@@ -28,6 +30,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class FishActivity extends AppCompatActivity implements FishAdapter.onFishClickedListener, FishAdapter.onFishLongClickedListener {
     private CritterDataViewModel critterDataViewModel;
+    SharedPreferences sharedPreferences;
+
     ColorDrawable green;
     ColorDrawable tan;
     ColorDrawable blue;
@@ -39,6 +43,7 @@ public class FishActivity extends AppCompatActivity implements FishAdapter.onFis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fish_activity);
+        sharedPreferences = getSharedPreferences("VillagerPrefs", MODE_PRIVATE);
 
         green = new ColorDrawable(Color.parseColor("#96e3af"));
         tan = new ColorDrawable(Color.parseColor("#f4ebe6"));
@@ -77,7 +82,7 @@ public class FishActivity extends AppCompatActivity implements FishAdapter.onFis
                     case R.id.navigation_fish:
                         break;
                     case R.id.navigation_crafting:
-                        intent = new Intent(getApplication(), CraftingActivity.class);
+                        intent = new Intent(getApplication(), FossilActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
@@ -98,6 +103,7 @@ public class FishActivity extends AppCompatActivity implements FishAdapter.onFis
         TextView critterCatchTime;
         TextView critterCatchSeason;
         CheckBox critterCaught;
+        CheckBox critterDonated;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.critter_alert_dialog, null);
         customLayout.setBackgroundColor(Color.TRANSPARENT);
@@ -129,6 +135,16 @@ public class FishActivity extends AppCompatActivity implements FishAdapter.onFis
             @Override
             public void onClick(View view) {
                 tFish.isCaught = !tFish.isCaught;
+                critterDataViewModel.updateCritterData(tFish);
+            }
+        });
+
+        critterDonated = customLayout.findViewById(R.id.cb_critter_donated_alert);
+        critterDonated.setChecked(fish.isMuseum);
+        critterDonated.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tFish.isMuseum = !tFish.isMuseum;
                 critterDataViewModel.updateCritterData(tFish);
             }
         });

@@ -2,6 +2,7 @@ package com.acnhcompanion.application;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,8 +14,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -26,11 +29,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.graphics.Matrix;
+import android.widget.TimePicker;
 
 import com.acnhcompanion.application.Bugs.BugActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.regex.Pattern;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -56,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     CardView cvLong;
     CardView cvSmall2;
     CardView cvClock;
-    CardView cvCalander;
+    CardView cvCrafting;
     CardView cvTailor;
 
     //Variables
@@ -95,32 +103,31 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
         }
 
-        cvClock = findViewById(R.id.cv_smallclock);
+        cvClock = findViewById(R.id.cv_smallClock);
+        cvClock.setCardBackgroundColor(tan.getColor());
         cvClock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
-                final View customLayout = getLayoutInflater().inflate(R.layout.time_dialog, null);
-                builder.setView(customLayout);
-                android.app.AlertDialog dialog = builder.create();
-                dialog.show();
-
+                /*if(Build.VERSION.SDK_INT >= 26) {
+                    alertDialogTime26();
+                } else {
+                    alertDialogTimeLegacy();;
+                }*/
+                alertDialogTimeLegacy();
 
             }
         });
 
-        cvCalander = findViewById(R.id.cv_smallCalander);
-        cvCalander.setOnClickListener(new View.OnClickListener() {
+        cvCrafting = findViewById(R.id.cv_crafting);
+        cvCrafting.setCardBackgroundColor(tan.getColor());
+        cvCrafting.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                DatePicker datePickerDialog = findViewById(R.id.dialog_date_date_picker);
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
-                final View customLayout = getLayoutInflater().inflate(R.layout.date_dialog, null);
-                builder.setView(customLayout);
-                android.app.AlertDialog dialog = builder.create();
-                dialog.show();
-
+                String url = "https://nookpedia.com/designs";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
             }
         });
 
@@ -136,20 +143,17 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         cvLong.setCardBackgroundColor(blue.getColor());
 
 
-        cvTailor = findViewById(R.id.cv_small1);
+        cvTailor = findViewById(R.id.cv_smallTailor);
         cvTailor.setCardBackgroundColor(tan.getColor());
         cvTailor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "https://nookpedia.com/designs";
+                String url = "https://acpatterns.com/editor";
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
             }
         });
-
-        cvSmall2 = findViewById(R.id.journal_card);
-        cvSmall2.setCardBackgroundColor(tan.getColor());
 
         TextView textViewIDCARD = findViewById(R.id.tv_id);
         textViewIDCARD.setText("Name: " + vName + "\n\nIsland: " + vIsland + "\n\nFriend Code: SW-" + vFriendCode);
@@ -180,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         });
 
         CardView cardViewImage = findViewById(R.id.iv_id_card);
+        cardViewImage.setCardBackgroundColor(new ColorDrawable(Color.parseColor("#faeebb")).getColor());
         cardViewImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -189,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         });
 
         CardView journalCard = findViewById(R.id.journal_card);
+        journalCard.setCardBackgroundColor(tan.getColor());
         journalCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,6 +209,273 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         toReturn +="Island: " + sharedPreferences.getString("Islandname", "") + "\n";
         toReturn +="Friendcode: " + sharedPreferences.getString("Friendcode", "") + "\n";
         return toReturn;
+    }
+
+    void alertDialogTime26(){
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        Date currentTime = Calendar.getInstance().getTime();
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(currentTime);
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendar.get(Calendar.MINUTE);
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentYear = calendar.get(Calendar.YEAR);
+        int gameMinute, gameHour;
+        int gameMonth, gameYear, gameDay;
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle("Island Data");
+
+        LinearLayout layout = new LinearLayout(MainActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText input1 = new EditText(MainActivity.this);
+        input1.setHint("Time");
+        gameMinute = (currentMinute + sharedPreferences.getInt("MinuteOff", 0));
+        gameHour = (currentHour + sharedPreferences.getInt("HourOff", 0));
+
+        if(gameHour != 0) {
+            input1.setText(gameHour + ":" + gameMinute);
+        }
+        input1.setFocusable(false);
+        input1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+                final View customLayout = getLayoutInflater().inflate(R.layout.time_dialog, null);
+                TimePicker clock = customLayout.findViewById(R.id.dialog_time_picker);
+                clock.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    @Override
+                    public void onTimeChanged(TimePicker timePicker, int i, int i1) {
+                        String minutes, hours;
+                        if(timePicker.getMinute() < 10){
+                            minutes = "0" + timePicker.getMinute();
+                        } else {
+                            minutes = "" + timePicker.getMinute();
+                        }
+                        if(timePicker.getHour() < 10){
+                            hours = "0" + timePicker.getHour();
+                        } else {
+                            hours = "" + timePicker.getHour();
+                        }
+                        input1.setText(hours+":"+minutes);
+                    }
+                });
+                builder.setView(customLayout);
+                android.app.AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+        layout.addView(input1);
+
+        final EditText input2 = new EditText(MainActivity.this);
+        input2.setHint("Date");
+        gameDay = (currentDay + sharedPreferences.getInt("DayOff", 0));
+        gameMonth = (currentMonth + sharedPreferences.getInt("MonthOff", 0));
+        gameYear = (currentYear + sharedPreferences.getInt("YearOff", 0));
+        if(gameDay != 0 && gameMonth != 0 && gameYear != 0){
+            input2.setText(gameMonth + "/" + gameDay + "/" + gameYear);
+        }
+
+
+        input2.setFocusable(false);
+        input2.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+                final View customLayout = getLayoutInflater().inflate(R.layout.date_dialog, null);
+                final DatePicker calander = customLayout.findViewById(R.id.dialog_date_date_picker);
+                calander.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+                    @Override
+                    public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                        input2.setText( datePicker.getMonth() + 1 + "/" + datePicker.getDayOfMonth() + "/" + datePicker.getYear()); }
+                });
+                builder.setView(customLayout);
+                android.app.AlertDialog dialog = builder.create();
+                dialog.show();
+                }
+            });
+
+
+        layout.addView(input2);
+
+        alertDialog.setView(layout);
+
+        alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                int hour, minute, day, month, year;
+                Date currentTime = Calendar.getInstance().getTime();
+                Calendar calendar = GregorianCalendar.getInstance();
+                calendar.setTime(currentTime);
+                int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+                int currentMinute = calendar.get(Calendar.MINUTE);
+                int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+                int currentMonth = calendar.get(Calendar.MONTH);
+                int currentYear = calendar.get(Calendar.YEAR);
+
+                String temp;
+                String[] tempArr;
+
+                temp = input1.getText().toString();
+                tempArr = temp.split(":");
+                hour = Integer.parseInt(tempArr[0]);
+                minute = Integer.parseInt(tempArr[1]);
+                editor.putInt("Hour",hour);
+                editor.putInt("Minute", minute);
+                editor.putInt("HourOff",hour - currentHour);
+                editor.putInt("MinuteOff", minute - currentMinute);
+
+                temp = input2.getText().toString();
+                tempArr = temp.split("/");
+                month = Integer.parseInt(tempArr[0]);
+                day = Integer.parseInt(tempArr[1]);
+                year = Integer.parseInt(tempArr[2]);
+                editor.putInt("Day",day);
+                editor.putInt("Month",month);
+                editor.putInt("Year",year);
+                editor.putInt("DayOff",day - currentDay);
+                editor.putInt("MonthOff",month - currentMonth);
+                editor.putInt("YearOff",year - currentYear);
+
+
+                editor.commit();
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        alertDialog.show();
+
+    }
+
+    void alertDialogTimeLegacy(){
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        Date currentTime = Calendar.getInstance().getTime();
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(currentTime);
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendar.get(Calendar.MINUTE);
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentYear = calendar.get(Calendar.YEAR);
+        int gameMinute, gameHour;
+        int gameMonth, gameYear, gameDay;
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle("Island Data");
+
+        LinearLayout layout = new LinearLayout(MainActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText input1 = new EditText(MainActivity.this);
+        input1.setHint("Time");
+        input1.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input1.addTextChangedListener(new TextWatcher() {
+            private static final int TOTAL_SYMBOLS = 5;
+            private static final int TOTAL_DIGITS = 4;
+            private static final int DIVIDER_MODULO = 2;
+            private static final int DIVIDER_POSITION = DIVIDER_MODULO - 1;
+            private static final char DIVIDER = ':';
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // noop
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // noop
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                /*if(!isInputCorrect(editable, TOTAL_SYMBOLS, DIVIDER_MODULO, DIVIDER)){
+                    editable.replace(0, editable.length(), buildCorrectString(editable.getChars();, DIVIDER_POSITION, DIVIDER));
+                }*/
+                String text = editable.toString();
+                int length = text.length();
+                if(length > 0 && !Pattern.matches("[012][0-9]:[0-5][0-9]", text)){
+                    editable.delete(length-1,length);
+                }
+            }
+        });
+        gameMinute = (currentMinute + sharedPreferences.getInt("MinuteOff", 0));
+        gameHour = (currentHour + sharedPreferences.getInt("HourOff", 0));
+
+        if(gameHour != 0) {
+            input1.setText(gameHour + ":" + gameMinute);
+        }
+        layout.addView(input1);
+
+        final EditText input2 = new EditText(MainActivity.this);
+        input2.setHint("Date");
+        input2.setInputType(InputType.TYPE_CLASS_NUMBER);
+        gameDay = (currentDay + sharedPreferences.getInt("DayOff", 0));
+        gameMonth = (currentMonth + sharedPreferences.getInt("MonthOff", 0));
+        gameYear = (currentYear + sharedPreferences.getInt("YearOff", 0));
+        if(gameDay != 0 && gameMonth != 0 && gameYear != 0){
+            input2.setText(gameMonth + "/" + gameDay + "/" + gameYear);
+        }
+        layout.addView(input2);
+
+        alertDialog.setView(layout);
+
+        alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                int hour, minute, day, month, year;
+                Date currentTime = Calendar.getInstance().getTime();
+                Calendar calendar = GregorianCalendar.getInstance();
+                calendar.setTime(currentTime);
+                int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+                int currentMinute = calendar.get(Calendar.MINUTE);
+                int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+                int currentMonth = calendar.get(Calendar.MONTH);
+                int currentYear = calendar.get(Calendar.YEAR);
+
+                String temp;
+                String[] tempArr;
+
+                temp = input1.getText().toString();
+                tempArr = temp.split(":");
+                hour = Integer.parseInt(tempArr[0]);
+                minute = Integer.parseInt(tempArr[1]);
+                editor.putInt("Hour",hour);
+                editor.putInt("Minute", minute);
+                editor.putInt("HourOff",hour - currentHour);
+                editor.putInt("MinuteOff", minute - currentMinute);
+
+                temp = input2.getText().toString();
+                tempArr = temp.split("/");
+                month = Integer.parseInt(tempArr[0]);
+                day = Integer.parseInt(tempArr[1]);
+                year = Integer.parseInt(tempArr[2]);
+                editor.putInt("Day",day);
+                editor.putInt("Month",month);
+                editor.putInt("Year",year);
+                editor.putInt("DayOff",day - currentDay);
+                editor.putInt("MonthOff",month - currentMonth);
+                editor.putInt("YearOff",year - currentYear);
+
+
+                editor.commit();
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        alertDialog.show();
+
     }
 
     void alertDialogEdit(){

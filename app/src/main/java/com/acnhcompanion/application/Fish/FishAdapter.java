@@ -48,6 +48,7 @@ public class FishAdapter extends BaseAdapter{
 
     public void updateFishAdpater(List<Fish> critterData){
         fishes = critterData;
+        //updateFishIDs(fishes);
         notifyDataSetChanged();
     }
 
@@ -89,6 +90,7 @@ public class FishAdapter extends BaseAdapter{
         TextView textView = view.findViewById(R.id.missing_text);
         ImageView missingCheck = view.findViewById(R.id.imageView2_missing);
         ImageView presentCheck = view.findViewById(R.id.imageView2);
+        ImageView museumCheck = view.findViewById(R.id.imageView3);
         CardView cardView = view.findViewById(R.id.cv_grid_icon);
         if(fishes.get(i).imgID == R.drawable.missing_image_asset){
             present.setVisibility(View.INVISIBLE);
@@ -104,7 +106,6 @@ public class FishAdapter extends BaseAdapter{
             } else {
                 missingCheck.setVisibility(View.INVISIBLE);
             }
-
 
         } else {
             tile.setImageResource(fishes.get(i).imgID);
@@ -124,8 +125,21 @@ public class FishAdapter extends BaseAdapter{
             } else {
                 presentCheck.setVisibility(View.INVISIBLE);
             }
+
+            if(fishes.get(i).isMuseum){
+                museumCheck.setVisibility(View.VISIBLE);
+            } else {
+                museumCheck.setVisibility(View.INVISIBLE);
+            }
         }
         return view;
+    }
+
+    int getRRawId(String critterName) {
+        switch (critterName) {
+
+        }
+        return R.drawable.missing_image_asset;
     }
 
     boolean isCatchable(String toCheckTimes, String toCheckSeasons){

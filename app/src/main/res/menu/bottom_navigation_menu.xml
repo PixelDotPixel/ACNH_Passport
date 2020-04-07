@@ -11,5 +11,5 @@
     <item
         android:id="@+id/navigation_crafting"
         android:icon="@drawable/ic_caught"
-        android:title="Crafting" />
+        android:title="Fossils" />
 </menu>
