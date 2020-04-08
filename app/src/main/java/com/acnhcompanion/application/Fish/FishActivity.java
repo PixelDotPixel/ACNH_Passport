@@ -31,6 +31,7 @@ import androidx.lifecycle.ViewModelProvider;
 public class FishActivity extends AppCompatActivity implements FishAdapter.onFishClickedListener, FishAdapter.onFishLongClickedListener {
     private CritterDataViewModel critterDataViewModel;
     SharedPreferences sharedPreferences;
+    boolean hemisphere;
 
     ColorDrawable green;
     ColorDrawable tan;
@@ -45,6 +46,7 @@ public class FishActivity extends AppCompatActivity implements FishAdapter.onFis
         setContentView(R.layout.fish_activity);
         sharedPreferences = getSharedPreferences("VillagerPrefs", MODE_PRIVATE);
 
+        hemisphere = sharedPreferences.getBoolean("Hemisphere", true);
         green = new ColorDrawable(Color.parseColor("#96e3af"));
         tan = new ColorDrawable(Color.parseColor("#f4ebe6"));
         blue = new ColorDrawable(Color.parseColor("#c2ffff"));
@@ -127,7 +129,11 @@ public class FishActivity extends AppCompatActivity implements FishAdapter.onFis
         critterCatchTime.setText("Time: " + fish.timeWindow);
 
         critterCatchSeason = customLayout.findViewById(R.id.tv_critter_catch_season_alert);
-        critterCatchSeason.setText("Season: " + fish.northernSeason);
+        if(hemisphere) {
+            critterCatchSeason.setText("Season: " + fish.northernSeason);
+        } else {
+            critterCatchSeason.setText("Season: " + fish.southernSeason);
+        }
 
         critterCaught = customLayout.findViewById(R.id.cb_critter_caught_alert);
         critterCaught.setChecked(fish.isCaught);

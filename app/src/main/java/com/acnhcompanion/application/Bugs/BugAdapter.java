@@ -1,5 +1,6 @@
 package com.acnhcompanion.application.Bugs;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -24,6 +25,7 @@ import java.util.List;
 import androidx.cardview.widget.CardView;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 public class BugAdapter  extends BaseAdapter{
     Context context;
@@ -31,6 +33,7 @@ public class BugAdapter  extends BaseAdapter{
     LayoutInflater inflater;
     BugAdapter.onBugClickedListener mBugListener;
     BugAdapter.onBugLongClickedListener mBugLongListener;
+    SharedPreferences sharedPreferences;
 
     public interface onBugClickedListener {
         void onBugClicked(Bug bug);
@@ -45,6 +48,7 @@ public class BugAdapter  extends BaseAdapter{
         mBugLongListener = longListener;
         bugs = new ArrayList<>();
         inflater = (LayoutInflater.from(context));
+        sharedPreferences = context.getSharedPreferences("VillagerPrefs", MODE_PRIVATE);
     }
 
     public void updateBugAdapter(List<Bug> critterData){
@@ -111,6 +115,7 @@ public class BugAdapter  extends BaseAdapter{
         ImageView missingCheck = view.findViewById(R.id.imageView2_missing);
         ImageView presentCheck = view.findViewById(R.id.imageView2);
         ImageView museumCheck = view.findViewById(R.id.imageView3);
+
         if(bugs.get(i).imgID == R.drawable.missing_image_asset){
             present.setVisibility(View.INVISIBLE);
             tile.setVisibility(View.INVISIBLE);
@@ -132,7 +137,15 @@ public class BugAdapter  extends BaseAdapter{
             missing.setVisibility(View.INVISIBLE);
             textView.setVisibility(View.INVISIBLE);
             cardView.setCardBackgroundColor(Color.WHITE);
-            if (!isCatchable(bugs.get(i).timeWindow, bugs.get(i).northernSeason)) {
+            String season = bugs.get(i).northernSeason;
+
+            if(sharedPreferences.getBoolean("Hemisphere", true)){
+                season = bugs.get(i).northernSeason;;
+            } else {
+                season = bugs.get(i).southernSeason;
+            }
+
+            if (!isCatchable(bugs.get(i).timeWindow, season)) {
                 ColorMatrix matrix = new ColorMatrix();
                 matrix.setSaturation(0);
 
@@ -327,11 +340,15 @@ public class BugAdapter  extends BaseAdapter{
     }
 
     boolean isWithinTimeWindow(String toCheck){
-        Date curentTime = Calendar.getInstance().getTime();
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        Date currentTime = Calendar.getInstance().getTime();
         Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(curentTime);
+        calendar.setTime(currentTime);
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendar.get(Calendar.MINUTE);
+        int hours;
         boolean toSet = true;
-        int hours = calendar.get(Calendar.HOUR_OF_DAY);
+        hours = (currentHour + sharedPreferences.getInt("HourOff", 0));
         if(toCheck.contains("All day")){
             return true;
         }
@@ -364,15 +381,19 @@ public class BugAdapter  extends BaseAdapter{
     }
 
     boolean isInSeason(String toCheck){
-        Date curentTime = Calendar.getInstance().getTime();
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        Date currentTime = Calendar.getInstance().getTime();
         Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(curentTime);
-        String temp = toCheck.split(" \\(Northern\\)| \\(Northern and Southern\\)")[0];
+        calendar.setTime(currentTime);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int month;
+        month = (currentMonth + sharedPreferences.getInt("MonthOff", 0));
+
+        String temp = toCheck.split(" \\(Northern\\)| \\(Northern and Southern\\)| \\(Southern\\)")[0];
         if(temp.contains("Year-round")){
             return true;
         }
         String[] bounds = temp.split("-| ");
-        int month = calendar.get(Calendar.MONTH);
         for(int i = 0; i < bounds.length-1; i += 2) {
             String lowerBoundName = bounds[i];
             String upperBoundName = bounds[i + 1];

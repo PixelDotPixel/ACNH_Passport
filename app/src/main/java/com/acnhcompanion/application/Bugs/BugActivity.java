@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModelProvider;
 public class BugActivity extends AppCompatActivity implements BugAdapter.onBugClickedListener, BugAdapter.onBugLongClickedListener {
     private CritterDataViewModel critterDataViewModel;
     SharedPreferences sharedPreferences;
+    boolean hemisphere;
 
     ColorDrawable green;
     ColorDrawable tan;
@@ -46,6 +47,7 @@ public class BugActivity extends AppCompatActivity implements BugAdapter.onBugCl
         setContentView(R.layout.bug_activity);
         sharedPreferences = getSharedPreferences("VillagerPrefs", MODE_PRIVATE);
 
+        hemisphere = sharedPreferences.getBoolean("Hemisphere", true);
         green = new ColorDrawable(Color.parseColor("#96e3af"));
         tan = new ColorDrawable(Color.parseColor("#f4ebe6"));
         blue = new ColorDrawable(Color.parseColor("#c2ffff"));
@@ -128,7 +130,12 @@ public class BugActivity extends AppCompatActivity implements BugAdapter.onBugCl
         critterCatchTime.setText("Time: " + bug.timeWindow);
 
         critterCatchSeason = customLayout.findViewById(R.id.tv_critter_catch_season_alert);
-        critterCatchSeason.setText("Season: " + bug.northernSeason);
+
+        if(hemisphere) {
+            critterCatchSeason.setText("Season: " + bug.northernSeason);
+        } else {
+            critterCatchSeason.setText("Season: " + bug.southernSeason);
+        }
 
         critterCaught = customLayout.findViewById(R.id.cb_critter_caught_alert);
         critterCaught.setChecked(bug.isCaught);

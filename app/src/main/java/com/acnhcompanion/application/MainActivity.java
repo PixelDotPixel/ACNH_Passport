@@ -27,9 +27,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.graphics.Matrix;
 import android.widget.TimePicker;
+import android.widget.ToggleButton;
 
 import com.acnhcompanion.application.Bugs.BugActivity;
 
@@ -38,6 +41,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import androidx.annotation.Nullable;
@@ -139,8 +143,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
         //cvBot = findViewById(R.id.cv_bottom);
 
-        cvLong = findViewById(R.id.cv_tall);
-        cvLong.setCardBackgroundColor(blue.getColor());
+        //cvLong = findViewById(R.id.cv_tall);
+        //cvLong.setCardBackgroundColor(blue.getColor());
 
 
         cvTailor = findViewById(R.id.cv_smallTailor);
@@ -302,6 +306,13 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
         layout.addView(input2);
 
+        final ToggleButton hemisphere = new ToggleButton(MainActivity.this);
+        hemisphere.setTextOn("Northern");
+        hemisphere.setTextOff("Southern");
+        hemisphere.setChecked(true);
+
+        layout.addView(hemisphere);
+
         alertDialog.setView(layout);
 
         alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
@@ -316,6 +327,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
                 int currentMonth = calendar.get(Calendar.MONTH);
                 int currentYear = calendar.get(Calendar.YEAR);
+                boolean hemisphereVal = hemisphere.isChecked();
 
                 String temp;
                 String[] tempArr;
@@ -340,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 editor.putInt("DayOff",day - currentDay);
                 editor.putInt("MonthOff",month - currentMonth);
                 editor.putInt("YearOff",year - currentYear);
+                editor.putBoolean("Hemisphere", hemisphereVal);
 
 
                 editor.commit();
@@ -375,8 +388,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         layout.setOrientation(LinearLayout.VERTICAL);
 
         final EditText input1 = new EditText(MainActivity.this);
-        input1.setHint("Time");
-        input1.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input1.setHint("Time (24hr format)");
+        input1.setInputType(InputType.TYPE_CLASS_DATETIME);
         input1.addTextChangedListener(new TextWatcher() {
             private static final int TOTAL_SYMBOLS = 5;
             private static final int TOTAL_DIGITS = 4;
@@ -401,71 +414,180 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 }*/
                 String text = editable.toString();
                 int length = text.length();
-                if(length > 0 && !Pattern.matches("[012][0-9]:[0-5][0-9]", text)){
+                if(length == 1 && !Pattern.matches("[0-2]", text)){
                     editable.delete(length-1,length);
+                } else if(length == 2 && !Pattern.matches("[0-1][0-9]|[2][0-3]", text)){
+                    editable.delete(length-1,length);
+                } else if(length == 2 && Pattern.matches("[0-2][0-9]", text)){
+                    editable.append(":");
+                } else if(length == 4 && !Pattern.matches("[0-2][0-9]:[0-5]", text)){
+                    editable.delete(length-1,length);
+                } else if(length == 5 && !Pattern.matches("[0-2][0-9]:[0-5][0-9]", text)){
+                    editable.delete(length-1,length);
+                } else if(length > 5){
+                    editable.delete(length-1, length);
                 }
             }
         });
-        gameMinute = (currentMinute + sharedPreferences.getInt("MinuteOff", 0));
-        gameHour = (currentHour + sharedPreferences.getInt("HourOff", 0));
-
-        if(gameHour != 0) {
-            input1.setText(gameHour + ":" + gameMinute);
+        gameMinute = (currentMinute + sharedPreferences.getInt("MinuteOff", -1));
+        gameHour = (currentHour + sharedPreferences.getInt("HourOff", -1));
+        String sMinute = Integer.toString(gameMinute);
+        String sHour = Integer.toString(gameHour);
+        if(gameMinute < 10){
+            sMinute = "0" + Integer.toString(gameMinute);
+        }
+        if(gameHour<10){
+            sHour = "0" + Integer.toString(gameHour);
+        }
+        if(gameHour != -1 || gameMinute != -1) {
+            input1.setText(sHour + ":" + sMinute);
         }
         layout.addView(input1);
 
         final EditText input2 = new EditText(MainActivity.this);
         input2.setHint("Date");
-        input2.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input2.setInputType(InputType.TYPE_CLASS_DATETIME);
+        input2.addTextChangedListener(new TextWatcher() {
+
+            public static final int MAX_FORMAT_LENGTH = 8;
+            public static final int MIN_FORMAT_LENGTH = 3;
+
+            private String updatedText;
+            private boolean editing;
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence text, int i, int i1, int i2) {
+
+                if (text.toString().equals(updatedText) || editing) return;
+
+                String digitsOnly = text.toString().replaceAll("\\D", "");
+                int digitLen = digitsOnly.length();
+
+                if (digitLen < MIN_FORMAT_LENGTH || digitLen > MAX_FORMAT_LENGTH) {
+                    updatedText = digitsOnly;
+                    return;
+                }
+
+                if (digitLen <= 4) {
+                    String month = digitsOnly.substring(0, 2);
+                    String day = digitsOnly.substring(2);
+
+                    updatedText = String.format(Locale.US, "%s/%s", month, day);
+                }
+                else {
+                    String month = digitsOnly.substring(0, 2);
+                    String day = digitsOnly.substring(2, 4);
+                    String year = digitsOnly.substring(4);
+
+                    updatedText = String.format(Locale.US, "%s/%s/%s", month, day, year);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.length() > 10){
+                    editable.delete(editable.length()-1,editable.length());
+                }
+                if (editing)
+                    return;
+                editing = true;
+                editable.clear();
+                editable.insert(0, updatedText);
+                editing = false;
+            }
+        });
+
+
         gameDay = (currentDay + sharedPreferences.getInt("DayOff", 0));
         gameMonth = (currentMonth + sharedPreferences.getInt("MonthOff", 0));
         gameYear = (currentYear + sharedPreferences.getInt("YearOff", 0));
         if(gameDay != 0 && gameMonth != 0 && gameYear != 0){
-            input2.setText(gameMonth + "/" + gameDay + "/" + gameYear);
+            String sMonth = Integer.toString(gameMonth);
+            String sDay =Integer.toString(gameDay);
+            String sYear = Integer.toString(gameYear);
+            if(gameMonth < 10){
+                sMonth =  "0" + Integer.toString(gameMonth);
+            }
+            if(gameDay < 10){
+                sDay =  "0" + Integer.toString(gameDay);
+            }
+            if(gameYear < 10){
+                sYear=  "000" + Integer.toString(gameYear);
+            }
+            if(gameYear < 100){
+                sYear=  "00" + Integer.toString(gameYear);
+            }
+            if(gameYear < 1000){
+                sYear=  "0" + Integer.toString(gameYear);
+            }
+
+            input2.setText(sMonth + "/" + sDay + "/" + sYear);
         }
         layout.addView(input2);
+
+        final ToggleButton hemisphere = new ToggleButton(MainActivity.this);
+        hemisphere.setTextOn("Northern");
+        hemisphere.setTextOff("Southern");
+        hemisphere.setChecked(true);
+
+        layout.addView(hemisphere);
 
         alertDialog.setView(layout);
 
         alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                int hour, minute, day, month, year;
-                Date currentTime = Calendar.getInstance().getTime();
-                Calendar calendar = GregorianCalendar.getInstance();
-                calendar.setTime(currentTime);
-                int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-                int currentMinute = calendar.get(Calendar.MINUTE);
-                int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-                int currentMonth = calendar.get(Calendar.MONTH);
-                int currentYear = calendar.get(Calendar.YEAR);
+                if(Pattern.matches("[0-1][0-9]:[0-5][0-9]|2[0-4]:[0-5][0-9]",input1.getText().toString()) && Pattern.matches(
+                        "0[13578]/[0-2][0-9]/[0-9]{4}|0[13578]/3[0-1]/[0-9]{4}|" +
+                        "1[02]/[0-2][0-9]/[0-9]{4}|1[02]/3[0-1]/[0-9]{4}|" +
+                        "0[469]/[0-2][0-9]/[0-9]{4}|0[469]/30/[0-9]{4}|" +
+                        "11/[0-2][0-9]/[0-9]{4}|11/30/[0-9]{4}|" +
+                        "02/[0-1][0-9]/[0-9]{4}|02/2[0-8]/[0-9]{4}",input2.getText().toString())) {
+                    int hour, minute, day, month, year;
+                    Date currentTime = Calendar.getInstance().getTime();
+                    Calendar calendar = GregorianCalendar.getInstance();
+                    calendar.setTime(currentTime);
+                    int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int currentMinute = calendar.get(Calendar.MINUTE);
+                    int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+                    int currentMonth = calendar.get(Calendar.MONTH);
+                    int currentYear = calendar.get(Calendar.YEAR);
+                    boolean hemisphereVal = hemisphere.isChecked();
 
-                String temp;
-                String[] tempArr;
+                    String temp;
+                    String[] tempArr;
 
-                temp = input1.getText().toString();
-                tempArr = temp.split(":");
-                hour = Integer.parseInt(tempArr[0]);
-                minute = Integer.parseInt(tempArr[1]);
-                editor.putInt("Hour",hour);
-                editor.putInt("Minute", minute);
-                editor.putInt("HourOff",hour - currentHour);
-                editor.putInt("MinuteOff", minute - currentMinute);
+                    temp = input1.getText().toString();
+                    tempArr = temp.split(":");
+                    hour = Integer.parseInt(tempArr[0]);
+                    minute = Integer.parseInt(tempArr[1]);
+                    /*editor.putInt("Hour", hour);
+                    editor.putInt("Minute", minute);*/
+                    editor.putInt("HourOff", hour - currentHour);
+                    editor.putInt("MinuteOff", minute - currentMinute);
 
-                temp = input2.getText().toString();
-                tempArr = temp.split("/");
-                month = Integer.parseInt(tempArr[0]);
-                day = Integer.parseInt(tempArr[1]);
-                year = Integer.parseInt(tempArr[2]);
-                editor.putInt("Day",day);
-                editor.putInt("Month",month);
-                editor.putInt("Year",year);
-                editor.putInt("DayOff",day - currentDay);
-                editor.putInt("MonthOff",month - currentMonth);
-                editor.putInt("YearOff",year - currentYear);
+                    temp = input2.getText().toString();
+                    tempArr = temp.split("/");
+                    month = Integer.parseInt(tempArr[0]);
+                    day = Integer.parseInt(tempArr[1]);
+                    year = Integer.parseInt(tempArr[2]);
+                    /*editor.putInt("Day", day);
+                    editor.putInt("Month", month);
+                    editor.putInt("Year", year);*/
+                    editor.putInt("DayOff", day - currentDay);
+                    editor.putInt("MonthOff", month - currentMonth);
+                    editor.putInt("YearOff", year - currentYear);
+                    editor.putBoolean("Hemisphere", hemisphereVal);
 
+                    editor.commit();
+                } else {
 
-                editor.commit();
+                }
             }
         });
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
