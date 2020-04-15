@@ -56,7 +56,7 @@ public class CraftingAdapter extends RecyclerView.Adapter<CraftingAdapter.Crafti
     @Override
     public CraftingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(R.layout.craftable_view_model, parent, false);
+        View itemView = inflater.inflate(R.layout.fossil_view_model, parent, false);
         return new CraftingViewHolder(itemView);
     }
 
@@ -109,8 +109,8 @@ public class CraftingAdapter extends RecyclerView.Adapter<CraftingAdapter.Crafti
             }*/
             String toBindMaterials = "";
             for(int i = 0; i < materialNames.length; i++){
-                if(materialCounts.length > i){
-                    toBindMaterials += materialNames[i] +"(x" + materialCounts[i] + ")\n";
+                if(materialCounts.length == materialNames.length){
+                    toBindMaterials += materialNames[i] + "  (x" + materialCounts[i] + ")\n";
                 } else {
                     toBindMaterials += materialNames[i] + "\n";
                 }

@@ -73,4 +73,8 @@ public class CritterDetailView extends AppCompatActivity {
         critterDataViewModel.updateCritterData(fish);
     }
 
+    public void onDonatedStatusClicked(View view){
+
+    }
+
 }

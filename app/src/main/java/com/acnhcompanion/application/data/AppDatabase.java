@@ -6,6 +6,7 @@ import com.acnhcompanion.application.Crafting.Materials;
 import com.acnhcompanion.application.Crafting.Recipes;
 import com.acnhcompanion.application.Bugs.Bug;
 import com.acnhcompanion.application.Fish.Fish;
+import com.acnhcompanion.application.Fossils.Fossil;
 import com.acnhcompanion.application.R;
 
 import java.util.concurrent.Executors;
@@ -16,7 +17,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Fish.class, Bug.class, Recipes.class, Materials.class}, version = 1)
+@Database(entities = {Fish.class, Bug.class, Recipes.class, Materials.class, Fossil.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract SavedVillagerDao savedVillagerDao();
     private static volatile AppDatabase INSTANCE;
@@ -46,7 +47,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     getInstance(context).savedVillagerDao().insertAll(fishFactory());
                                     getInstance(context).savedVillagerDao().insertAll(recipesFactory());
                                     getInstance(context).savedVillagerDao().insertAll(bugFactory());
-                                    getInstance(context).savedVillagerDao().insertAll(recipesFactory());
+                                    getInstance(context).savedVillagerDao().insertAll(fossilFactory());
                                 }
                             });
                         }
@@ -538,6 +539,85 @@ public abstract class AppDatabase extends RoomDatabase {
                 new Recipes("Spiky Fence",R.raw.acnh_2dda3767ecc1034a92b7f6730a7092f4, "Hardwood", "8"),
                 new Recipes("Star Head",R.raw.acnh_bccb469a87f957e722864e8975abbb98, "Star Fragment", "5"),
                 new Recipes("Star Pochette",R.raw.acnh_0425a7383d0bbea526b9e73e1842d9be, "Star Fragment", "6")
+        };
+    }
+
+    private static Fossil[] fossilFactory(){
+        return new Fossil[] {
+                new Fossil("NOSET","Acanthostega",R.raw.acanthostega,2000,1),
+                new Fossil("NOSET","Amber",R.raw.amber,1200,1),
+                new Fossil("NOSET","Ammonite",R.raw.ammonite,1100,1),
+                new Fossil("NOSET","Anomalocaris",R.raw.anomalocaris,2000,1),
+                new Fossil("NOSET","Archaeopteryx",R.raw.archaeopteryx,1300,1),
+                new Fossil("NOSET","Australopith",R.raw.australopith,1100,1),
+                new Fossil("NOSET","Coprolite",R.raw.coprolite,1100,1),
+                new Fossil("NOSET","Dinosaur track",R.raw.dinosaurtrack,1000,1),
+                new Fossil("NOSET","Dunkleosteus",R.raw.dunkleosteus,3500,1),
+                new Fossil("NOSET","Eusthenopteron",R.raw.eusthenopteron,2000,1),
+                new Fossil("NOSET","Juramaia",R.raw.juramaia,1000,1),
+                new Fossil("NOSET","Myllokunmingia",R.raw.myllokunmingia,1500,1),
+                new Fossil("NOSET","Shark-tooth pattern",R.raw.sharktoothpattern,1000,1),
+                new Fossil("NOSET","Trilobite",R.raw.trilobite,1300,1),
+                new Fossil("Ankylosaurus","Ankylo skull",R.raw.ankyloskull,5000,1),
+                new Fossil("Ankylosaurus","Ankylo torso",R.raw.ankylotorso,3000,2),
+                new Fossil("Ankylosaurus","Ankylo tail",R.raw.ankylotail,2500,3),
+                new Fossil("Archelon","Archelon skull",R.raw.archelonskull,4000,1),
+                new Fossil("Archelon","Archelon tail",R.raw.archelontail,3500,2),
+                new Fossil("Brachiosaurus","Brachio skull",R.raw.brachioskull,6000,1),
+                new Fossil("Brachiosaurus","Brachio chest",R.raw.brachiochest,5500,2),
+                new Fossil("Brachiosaurus","Brachio pelvis",R.raw.brachiopelvis,5000,3),
+                new Fossil("Brachiosaurus","Brachio tail",R.raw.brachiotail,5500,4),
+                new Fossil("Deinonychus","Deinony torso",R.raw.deinonytorso,3000,1),
+                new Fossil("Deinonychus","Deinony tail",R.raw.deinonytail,2500,2),
+                new Fossil("Dimetrodon","Dimetrodon skull",R.raw.dimetrodonskull,5500,1),
+                new Fossil("Dimetrodon","Dimetrodon torso",R.raw.dimetrodontorso,5000,2),
+                new Fossil("Diplodocus","Diplo skull",R.raw.diploskull,5000,1),
+                new Fossil("Diplodocus","Diplo neck",R.raw.diploneck,4500,2),
+                new Fossil("Diplodocus","Diplo chest",R.raw.diplochest,4000,3),
+                new Fossil("Diplodocus","Diplo pelvis",R.raw.diplopelvis,4500,4),
+                new Fossil("Diplodocus","Diplo tail",R.raw.diplotail,5000,5),
+                new Fossil("Diplodocus","Diplo tail tip",R.raw.diplotailtip,4000,6),
+                new Fossil("Iguanodon","Iguanodon skull",R.raw.iguanodonskull,4000,1),
+                new Fossil("Iguanodon","Iguanodon torso",R.raw.iguanodontorso,3500,2),
+                new Fossil("Iguanodon","Iguanodon tail",R.raw.iguanodontail,3000,3),
+                new Fossil("Mammoth","Mammoth skull",R.raw.mammothskull,3000,1),
+                new Fossil("Mammoth","Mammoth torso",R.raw.mammothtorso,2500,2),
+                new Fossil("Megacerops","Megacero skull",R.raw.megaceroskull,4500,1),
+                new Fossil("Megacerops","Megacero torso",R.raw.megacerotorso,3500,2),
+                new Fossil("Megacerops","Megacero tail",R.raw.megacerotail,3000,3),
+                new Fossil("Megaloceros","Left megalo side",R.raw.leftmegaloside,4000,1),
+                new Fossil("Megaloceros","Right megalo side",R.raw.rightmegaloside,5500,2),
+                new Fossil("Ophthalmosaurus","Ophthalmo skull",R.raw.ophthalmoskull,2500,1),
+                new Fossil("Ophthalmosaurus","Ophthalmo torso",R.raw.ophthalmotorso,2000,2),
+                new Fossil("Pachycephalosaurus","Pachysaurus skull",R.raw.pachysaurusskull,4000,1),
+                new Fossil("Pachycephalosaurus","Pachysaurus tail",R.raw.pachysaurustail,3500,2),
+                new Fossil("Parasaur","Parasaur skull",R.raw.parasaurskull,3500,1),
+                new Fossil("Parasaur","Parasaur torso",R.raw.parasaurtorso,3000,2),
+                new Fossil("Parasaur","Parasaur tail",R.raw.parasaurtail,2500,3),
+                new Fossil("Plesiosaur","Plesio skull",R.raw.plesioskull,4000,1),
+                new Fossil("Plesiosaur","Plesio tail",R.raw.plesioneck,4500,2),
+                new Fossil("Plesiosaur","Plesio body",R.raw.plesiobody,4500,3),
+                new Fossil("Pteranodon","Right ptera wing",R.raw.rightpterawing,4500,1),
+                new Fossil("Pteranodon","Ptera body",R.raw.pterabody,4000,2),
+                new Fossil("Pteranodon","Left ptera wing",R.raw.leftpterawing,4500,3),
+                new Fossil("Quetzalcoatlus","Right quetzal wing",R.raw.rightquetzalwing,5000,1),
+                new Fossil("Quetzalcoatlus","Quetzal torso",R.raw.quetzaltorso,4500,2),
+                new Fossil("Quetzalcoatlus","Left quetzal wing",R.raw.leftquetzalwing,5000,3),
+                new Fossil("Sabertooth tiger","Sabertooth skull",R.raw.sabertoothskull,2500,1),
+                new Fossil("Sabertooth tiger","Sabertooth tail",R.raw.sabertoothtail,2000,2),
+                new Fossil("Spinosaurus","Spino skull",R.raw.spinoskull,4000,1),
+                new Fossil("Spinosaurus","Spino torso",R.raw.spinotorso,5000,2),
+                new Fossil("Spinosaurus","Spino tail",R.raw.spinotail,4000,3),
+                new Fossil("Stegosaur","Stego skull",R.raw.stegoskull,5000,1),
+                new Fossil("Stegosaur","Stego torso",R.raw.stegotorso,4500,2),
+                new Fossil("Stegosaur","Stego tail",R.raw.stegotail,4000,3),
+                new Fossil("Triceratops","Tricera skull",R.raw.triceraskull,5500,1),
+                new Fossil("Triceratops","Tricera torso",R.raw.triceratorso,5000,2),
+                new Fossil("Triceratops","Tricera tail",R.raw.triceratail,4500,3),
+                new Fossil("Tyrannosaurus rex","T. rex skull",R.raw.trexskull,6000,1),
+                new Fossil("Tyrannosaurus rex","T. rex torso",R.raw.trextorso,5500,2),
+                new Fossil("Tyrannosaurus rex","T. rex tail",R.raw.trextail,5000,3)
+
         };
     }
 }

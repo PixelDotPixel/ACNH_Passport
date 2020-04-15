@@ -1,6 +1,5 @@
 package com.acnhcompanion.application.Crafting;
 
-import android.app.ActivityManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -36,7 +35,7 @@ public class CraftingActivity extends AppCompatActivity implements CraftingAdapt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.crafting_activity);
+        setContentView(R.layout.fossil_activity);
 
         green = new ColorDrawable(Color.parseColor("#96e3af"));
         tan = new ColorDrawable(Color.parseColor("#f4ebe6"));

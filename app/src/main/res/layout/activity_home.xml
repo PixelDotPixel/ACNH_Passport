@@ -55,6 +55,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:scaleType="fitXY"
                         android:src="@drawable/bannerv1"/>
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
@@ -103,8 +104,8 @@
                             android:id="@+id/iv_id"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:scaleType="fitXY"
-                            android:src="@drawable/test_id"/>
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/add_pfp_2"/>
 
                     </androidx.cardview.widget.CardView>
 
@@ -124,8 +125,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginTop="2dp"
-                            android:layout_marginLeft="4dp"
-                            android:text="Name: Jersh\n\nFriendCode: 1111-1111-1111-1111\n\nIsland: Groovey-Rock\n\n"/>
+                            android:layout_marginLeft="4dp"/>
                     </androidx.cardview.widget.CardView>
 
 
@@ -147,7 +147,7 @@
 
             <androidx.cardview.widget.CardView
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/cv_small1"
+                android:id="@+id/cv_crafting"
                 android:layout_width="175dp"
                 android:layout_height="175dp"
                 card_view:cardCornerRadius="8dp"
@@ -155,7 +155,7 @@
                 android:layout_marginRight="15dp">
 
                 <ImageView
-                    android:src="@drawable/tailor"
+                    android:src="@drawable/person_ic"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="fitXY"/>
@@ -166,13 +166,13 @@
             <androidx.cardview.widget.CardView
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/journal_card"
-                android:layout_toRightOf="@id/cv_small1"
+                android:layout_toRightOf="@id/cv_crafting"
                 android:layout_width="175dp"
                 android:layout_height="175dp"
                 card_view:cardCornerRadius="8dp"
                 card_view:cardElevation="8dp">
                 <ImageView
-                    android:src="@drawable/journal"
+                    android:src="@drawable/journal_v2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="fitXY"/>
@@ -189,9 +189,10 @@
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_height="200dp"
+            android:gravity="center"
             >
 
-            <androidx.cardview.widget.CardView
+            <!--<androidx.cardview.widget.CardView
                 android:id="@+id/cv_tall"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_gravity="center"
@@ -207,16 +208,32 @@
                     android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:layout_height="175dp"
-                    android:gravity="center">
+                    android:gravity="center">-->
 
                     <androidx.cardview.widget.CardView
                         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/cv_smallclock"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
+                        android:id="@+id/cv_smallTailor"
+                        android:layout_width="175dp"
+                        android:layout_height="175dp"
                         card_view:cardCornerRadius="8dp"
                         card_view:cardElevation="8dp"
                         android:layout_marginRight="15dp">
+                        <ImageView
+                            android:src="@drawable/sharing_ic"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"/>
+                    </androidx.cardview.widget.CardView>
+
+
+                    <androidx.cardview.widget.CardView
+                        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/cv_smallClock"
+                        android:layout_toRightOf="@id/cv_smallTailor"
+                        android:layout_width="175dp"
+                        android:layout_height="175dp"
+                        card_view:cardCornerRadius="8dp"
+                        card_view:cardElevation="8dp">
                         <ImageView
                             android:src="@drawable/clock"
                             android:layout_width="match_parent"
@@ -224,26 +241,10 @@
                             android:scaleType="fitXY"/>
 
                     </androidx.cardview.widget.CardView>
+                <!--</RelativeLayout>
 
 
-                    <androidx.cardview.widget.CardView
-                        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/cv_smallCalander"
-                        android:layout_toRightOf="@id/cv_smallclock"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        card_view:cardCornerRadius="8dp"
-                        card_view:cardElevation="8dp">
-                        <ImageView
-                            android:src="@drawable/calander"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="fitXY"/>
-                    </androidx.cardview.widget.CardView>
-                </RelativeLayout>
-
-
-            </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>-->
         </RelativeLayout>
 
         <!--<RelativeLayout

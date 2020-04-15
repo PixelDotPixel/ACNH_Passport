@@ -4,6 +4,7 @@ import com.acnhcompanion.application.Crafting.Materials;
 import com.acnhcompanion.application.Crafting.Recipes;
 import com.acnhcompanion.application.Bugs.Bug;
 import com.acnhcompanion.application.Fish.Fish;
+import com.acnhcompanion.application.Fossils.Fossil;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import androidx.room.Update;
 @Dao
 public interface SavedVillagerDao {
 
+    //----FISH START----
     @Insert
     void insert(Fish critterData);
 
@@ -29,6 +31,11 @@ public interface SavedVillagerDao {
     @Delete
     void delete(Fish critterData);
 
+    @Query("SELECT * FROM Fish")
+    public LiveData<List<Fish>> getFishData();
+    //-----FISH END-----
+
+    //----BUGS START----
     @Insert
     void insert(Bug critterData);
 
@@ -41,6 +48,11 @@ public interface SavedVillagerDao {
     @Delete
     void delete(Bug critterData);
 
+    @Query("SELECT * FROM Bug")
+    public LiveData<List<Bug>> getBugData();
+    //-----BUGS END-----
+
+    //----RECIPES START----
     @Insert
     void insert(Recipes critterData);
 
@@ -53,6 +65,11 @@ public interface SavedVillagerDao {
     @Delete
     void delete(Recipes critterData);
 
+    @Query("SELECT * FROM Recipes")
+    public LiveData<List<Recipes>> getRecipesData();
+    //----RECIPES END----
+
+    //----MATERIALS START----
     @Insert
     void insert(Materials critterData);
 
@@ -65,16 +82,32 @@ public interface SavedVillagerDao {
     @Delete
     void delete(Materials critterData);
 
-    @Query("SELECT * FROM Fish")
-    public LiveData<List<Fish>> getFishData();
-
-    @Query("SELECT * FROM Bug")
-    public LiveData<List<Bug>> getBugData();
-
-    @Query("SELECT * FROM Recipes")
-    public LiveData<List<Recipes>> getRecipesData();
-
     @Query("SELECT * FROM Materials")
     public LiveData<List<Materials>> getMaterialsData();
+    //----MATERIALS END----
+
+    //----FOSSILS START----
+    @Insert
+    void insert(Fossil critterData);
+
+    @Insert
+    void insertAll(Fossil... critterData);
+
+    @Update
+    void update(Fossil critterData);
+
+    @Delete
+    void delete(Fossil critterData);
+
+    @Query("SELECT * FROM Fossil")
+    public LiveData<List<Fossil>> getFossilData();
+    //----FOSSILS END----
+
+
+
+
+
+
+
 
 }

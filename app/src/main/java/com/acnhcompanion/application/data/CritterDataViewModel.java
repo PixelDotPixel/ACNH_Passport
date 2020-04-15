@@ -6,6 +6,7 @@ import com.acnhcompanion.application.Crafting.Materials;
 import com.acnhcompanion.application.Crafting.Recipes;
 import com.acnhcompanion.application.Bugs.Bug;
 import com.acnhcompanion.application.Fish.Fish;
+import com.acnhcompanion.application.Fossils.Fossil;
 
 import java.util.List;
 
@@ -94,6 +95,25 @@ public class CritterDataViewModel extends AndroidViewModel {
         return critterDataRepo.getMaterialsData();
     }
     //----End Materials Opperations
+
+    //----Fossils opperations
+    public void insertCritterData(Fossil critterData){
+        critterDataRepo.insertFossilData(critterData);
+    }
+
+    public void updateCritterData(Fossil critterData){
+        critterDataRepo.updateFossilData(critterData);
+    }
+
+    public void deleteCritterData(Fossil critterData){
+        critterDataRepo.deleteFossilData(critterData);
+    }
+
+    public LiveData<List<Fossil>> getFossilData(){
+        return critterDataRepo.getFossilData();
+    }
+    //----End Materials Opperations
+
 
 
 }

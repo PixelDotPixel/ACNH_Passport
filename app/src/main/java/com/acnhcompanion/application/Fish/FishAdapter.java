@@ -1,5 +1,6 @@
 package com.acnhcompanion.application.Fish;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -23,6 +24,7 @@ import java.util.List;
 import androidx.cardview.widget.CardView;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 public class FishAdapter extends BaseAdapter{
     Context context;
@@ -30,6 +32,7 @@ public class FishAdapter extends BaseAdapter{
     LayoutInflater inflater;
     onFishClickedListener mFishListener;
     FishAdapter.onFishLongClickedListener mFishLongListener;
+    SharedPreferences sharedPreferences;
 
     public interface onFishClickedListener {
         void onFishClicked(Fish fish);
@@ -44,10 +47,12 @@ public class FishAdapter extends BaseAdapter{
         mFishLongListener = longClickedListener;
         fishes = new ArrayList<>();
         inflater = (LayoutInflater.from(context));
+        sharedPreferences = context.getSharedPreferences("VillagerPrefs", MODE_PRIVATE);
     }
 
     public void updateFishAdpater(List<Fish> critterData){
         fishes = critterData;
+        //updateFishIDs(fishes);
         notifyDataSetChanged();
     }
 
@@ -89,6 +94,7 @@ public class FishAdapter extends BaseAdapter{
         TextView textView = view.findViewById(R.id.missing_text);
         ImageView missingCheck = view.findViewById(R.id.imageView2_missing);
         ImageView presentCheck = view.findViewById(R.id.imageView2);
+        ImageView museumCheck = view.findViewById(R.id.imageView3);
         CardView cardView = view.findViewById(R.id.cv_grid_icon);
         if(fishes.get(i).imgID == R.drawable.missing_image_asset){
             present.setVisibility(View.INVISIBLE);
@@ -105,13 +111,20 @@ public class FishAdapter extends BaseAdapter{
                 missingCheck.setVisibility(View.INVISIBLE);
             }
 
-
         } else {
             tile.setImageResource(fishes.get(i).imgID);
             missing.setVisibility(View.INVISIBLE);
             textView.setVisibility(View.INVISIBLE);
             cardView.setCardBackgroundColor(Color.WHITE);
-            if (!isCatchable(fishes.get(i).timeWindow, fishes.get(i).northernSeason)) {
+            String season = fishes.get(i).northernSeason;
+
+            if(sharedPreferences.getBoolean("Hemisphere", true)){
+                season = fishes.get(i).northernSeason;;
+            } else {
+                season = fishes.get(i).southernSeason;
+            }
+
+            if (!isCatchable(fishes.get(i).timeWindow, season)) {
                 ColorMatrix matrix = new ColorMatrix();
                 matrix.setSaturation(0);
 
@@ -124,8 +137,21 @@ public class FishAdapter extends BaseAdapter{
             } else {
                 presentCheck.setVisibility(View.INVISIBLE);
             }
+
+            if(fishes.get(i).isMuseum){
+                museumCheck.setVisibility(View.VISIBLE);
+            } else {
+                museumCheck.setVisibility(View.INVISIBLE);
+            }
         }
         return view;
+    }
+
+    int getRRawId(String critterName) {
+        switch (critterName) {
+
+        }
+        return R.drawable.missing_image_asset;
     }
 
     boolean isCatchable(String toCheckTimes, String toCheckSeasons){
@@ -133,11 +159,16 @@ public class FishAdapter extends BaseAdapter{
     }
 
     boolean isWithinTimeWindow(String toCheck){
-        Date curentTime = Calendar.getInstance().getTime();
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        Date currentTime = Calendar.getInstance().getTime();
         Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(curentTime);
+        calendar.setTime(currentTime);
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendar.get(Calendar.MINUTE);
+        int gameHour;
         boolean toSet = true;
-        int hours = calendar.get(Calendar.HOUR_OF_DAY);
+        gameHour = (currentHour + sharedPreferences.getInt("HourOff", 0));
+
         if(toCheck.contains("All day")){
             return true;
         }
@@ -157,11 +188,11 @@ public class FishAdapter extends BaseAdapter{
             int upperBound = Integer.parseInt(boundsUpper) + adderUpper;
             int lowerBound = Integer.parseInt(boundsLower) + adderLower;
             if(upperBound < lowerBound){
-                if(hours >= lowerBound || hours < upperBound){
+                if(gameHour >= lowerBound || gameHour < upperBound){
                     return true;
                 }
             } else {
-                if(hours >= lowerBound && hours < upperBound){
+                if(gameHour >= lowerBound && gameHour < upperBound){
                     return true;
                 }
             }
@@ -170,15 +201,19 @@ public class FishAdapter extends BaseAdapter{
     }
 
     boolean isInSeason(String toCheck){
-        Date curentTime = Calendar.getInstance().getTime();
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        Date currentTime = Calendar.getInstance().getTime();
         Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(curentTime);
-        String temp = toCheck.split(" \\(Northern\\)| \\(Northern and Southern\\)")[0];
+        calendar.setTime(currentTime);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int month;
+        month = (currentMonth + sharedPreferences.getInt("MonthOff", 0));
+
+        String temp = toCheck.split(" \\(Northern\\)| \\(Northern and Southern\\)| \\(Southern\\)")[0];
         if(temp.contains("Year-round")){
             return true;
         }
         String[] bounds = temp.split("-| ");
-        int month = calendar.get(Calendar.MONTH);
         for(int i = 0; i < bounds.length-1; i += 2) {
             String lowerBoundName = bounds[i];
             String upperBoundName = bounds[i + 1];
