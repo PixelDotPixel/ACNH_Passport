@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">http://76.115.157.57:2048/ACNHPassport/api.php/acnh_sharing/</domain>
+    </domain-config>
+</network-security-config>

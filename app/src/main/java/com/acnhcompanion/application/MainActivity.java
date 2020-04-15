@@ -108,10 +108,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             public void onChanged(String s) {
                 if(s != "init") {
                     Toast toShow;
+                    Log.d(TAG, "onChanged: " + s);
                     if(s == "0") {
                         toShow = Toast.makeText(getApplicationContext(), "Friend Code is Live!", Toast.LENGTH_LONG);
                     } else {
-                        toShow = Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG);
+                        toShow = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
                     }
                     toShow.show();
                 }

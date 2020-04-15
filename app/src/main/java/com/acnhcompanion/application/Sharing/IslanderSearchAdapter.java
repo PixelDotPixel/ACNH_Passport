@@ -80,6 +80,8 @@ public class IslanderSearchAdapter extends RecyclerView.Adapter<IslanderSearchAd
             if(islander.Image != ""){
                 Bitmap image = decodeBase64(islander.Image);
                 tile_icon.setImageBitmap(image);
+            } else {
+                tile_icon.setImageResource(R.drawable.missing_image_asset);
             }
             islandItemTitle.setText(spannableString);
             islandItemDetails.setText("Friend Code: " + islander.Friend_code + "\n\n" + "Islander: " + islander.Islander + "\n\n");
