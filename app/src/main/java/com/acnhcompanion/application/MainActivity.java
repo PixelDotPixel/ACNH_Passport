@@ -135,8 +135,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                     alertDialogTimeLegacy();;
                 }
 
+
             }
         });
+
 
         cvCrafting = findViewById(R.id.cv_crafting);
         cvCrafting.setCardBackgroundColor(tan.getColor());

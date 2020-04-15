@@ -3,6 +3,7 @@ package com.acnhcompanion.application.Crafting;
 import android.content.Context;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class CraftingAdapter extends RecyclerView.Adapter<CraftingAdapter.CraftingViewHolder> {
     Context context;
@@ -111,6 +114,7 @@ public class CraftingAdapter extends RecyclerView.Adapter<CraftingAdapter.Crafti
                 } else {
                     toBindMaterials += materialNames[i] + "\n";
                 }
+
             }
 
             craftableItemDetails.setText(toBindMaterials);
