@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -21,20 +22,18 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.widget.AnalogClock;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.graphics.Matrix;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.acnhcompanion.application.Bugs.BugActivity;
+import com.acnhcompanion.application.Sharing.IslanderPostRepository;
+import com.acnhcompanion.application.Sharing.Islands_Activity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,10 +49,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
     //Functional Elements
     SharedPreferences sharedPreferences;
+    IslanderPostRepository islanderPostRepository;
 
     //Stored Variables
     String uri_image;
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     private static final String TAG = MainActivity.class.getSimpleName();
     private int PICK_IMAGE_REQUEST = 1;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,11 +102,26 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         vFriendCode = sharedPreferences.getString("Friendcode", "");
         uri_image = sharedPreferences.getString("imgPath", "");
 
+        islanderPostRepository = new IslanderPostRepository(vName, vIsland, vFriendCode, uri_image, "HELLO FROM THE APP");
+        islanderPostRepository.getStatus().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if(s != "init") {
+                    Toast toShow;
+                    if(s == "0") {
+                        toShow = Toast.makeText(getApplicationContext(), "Friend Code is Live!", Toast.LENGTH_LONG);
+                    } else {
+                        toShow = Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG);
+                    }
+                    toShow.show();
+                }
+            }
+        });
+
         if(uri_image != ""){
             Bitmap image = decodeBase64(uri_image);
             ImageView imageView = findViewById(R.id.iv_id);
             imageView.setImageBitmap(image);
-
         }
 
         cvClock = findViewById(R.id.cv_smallClock);
@@ -112,12 +129,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         cvClock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*if(Build.VERSION.SDK_INT >= 26) {
+                if(Build.VERSION.SDK_INT >= 26) {
                     alertDialogTime26();
                 } else {
                     alertDialogTimeLegacy();;
-                }*/
-                alertDialogTimeLegacy();
+                }
 
             }
         });
@@ -128,9 +144,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                String url = "https://nookpedia.com/designs";
+                /*String url = "https://nookpedia.com/designs";
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
+                startActivity(intent);*/
+                Intent intent = new Intent(MainActivity.this, Islands_Activity.class);
                 startActivity(intent);
             }
         });
@@ -152,10 +170,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         cvTailor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "https://acpatterns.com/editor";
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                startActivity(intent);
+                postAlertDialog();
             }
         });
 
@@ -213,6 +228,39 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         toReturn +="Island: " + sharedPreferences.getString("Islandname", "") + "\n";
         toReturn +="Friendcode: " + sharedPreferences.getString("Friendcode", "") + "\n";
         return toReturn;
+    }
+
+    void postAlertDialog(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle("Sharing Passport!");
+
+        LinearLayout layout = new LinearLayout(MainActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText input = new EditText(MainActivity.this);
+        input.setHint("Write an Invitation to others!");
+        InputFilter[] filter = new InputFilter[1];
+        filter[0] = new InputFilter.LengthFilter(180);
+        input.setFilters(filter);
+
+        layout.addView(input);
+        alertDialog.setView(layout);
+
+        alertDialog.setPositiveButton("Post", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                islanderPostRepository.vMessage = input.getText().toString();
+                islanderPostRepository.postIslanderData();
+            }
+        });
+
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        alertDialog.show();
     }
 
     void alertDialogTime26(){
@@ -318,44 +366,51 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                int hour, minute, day, month, year;
-                Date currentTime = Calendar.getInstance().getTime();
-                Calendar calendar = GregorianCalendar.getInstance();
-                calendar.setTime(currentTime);
-                int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-                int currentMinute = calendar.get(Calendar.MINUTE);
-                int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-                int currentMonth = calendar.get(Calendar.MONTH);
-                int currentYear = calendar.get(Calendar.YEAR);
-                boolean hemisphereVal = hemisphere.isChecked();
+                if(Pattern.matches("[0-1][0-9]:[0-5][0-9]|2[0-4]:[0-5][0-9]",input1.getText().toString()) && Pattern.matches(
+                        "0[13578]/[0-2][0-9]/[0-9]{4}|0[13578]/3[0-1]/[0-9]{4}|" +
+                                "1[02]/[0-2][0-9]/[0-9]{4}|1[02]/3[0-1]/[0-9]{4}|" +
+                                "0[469]/[0-2][0-9]/[0-9]{4}|0[469]/30/[0-9]{4}|" +
+                                "11/[0-2][0-9]/[0-9]{4}|11/30/[0-9]{4}|" +
+                                "02/[0-1][0-9]/[0-9]{4}|02/2[0-8]/[0-9]{4}",input2.getText().toString())) {
+                    int hour, minute, day, month, year;
+                    Date currentTime = Calendar.getInstance().getTime();
+                    Calendar calendar = GregorianCalendar.getInstance();
+                    calendar.setTime(currentTime);
+                    int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int currentMinute = calendar.get(Calendar.MINUTE);
+                    int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+                    int currentMonth = calendar.get(Calendar.MONTH);
+                    int currentYear = calendar.get(Calendar.YEAR);
+                    boolean hemisphereVal = hemisphere.isChecked();
 
-                String temp;
-                String[] tempArr;
+                    String temp;
+                    String[] tempArr;
 
-                temp = input1.getText().toString();
-                tempArr = temp.split(":");
-                hour = Integer.parseInt(tempArr[0]);
-                minute = Integer.parseInt(tempArr[1]);
-                editor.putInt("Hour",hour);
-                editor.putInt("Minute", minute);
-                editor.putInt("HourOff",hour - currentHour);
-                editor.putInt("MinuteOff", minute - currentMinute);
+                    temp = input1.getText().toString();
+                    tempArr = temp.split(":");
+                    hour = Integer.parseInt(tempArr[0]);
+                    minute = Integer.parseInt(tempArr[1]);
+                    editor.putInt("Hour", hour);
+                    editor.putInt("Minute", minute);
+                    editor.putInt("HourOff", hour - currentHour);
+                    editor.putInt("MinuteOff", minute - currentMinute);
 
-                temp = input2.getText().toString();
-                tempArr = temp.split("/");
-                month = Integer.parseInt(tempArr[0]);
-                day = Integer.parseInt(tempArr[1]);
-                year = Integer.parseInt(tempArr[2]);
-                editor.putInt("Day",day);
-                editor.putInt("Month",month);
-                editor.putInt("Year",year);
-                editor.putInt("DayOff",day - currentDay);
-                editor.putInt("MonthOff",month - currentMonth);
-                editor.putInt("YearOff",year - currentYear);
-                editor.putBoolean("Hemisphere", hemisphereVal);
+                    temp = input2.getText().toString();
+                    tempArr = temp.split("/");
+                    month = Integer.parseInt(tempArr[0]);
+                    day = Integer.parseInt(tempArr[1]);
+                    year = Integer.parseInt(tempArr[2]);
+                    editor.putInt("Day", day);
+                    editor.putInt("Month", month);
+                    editor.putInt("Year", year);
+                    editor.putInt("DayOff", day - currentDay);
+                    editor.putInt("MonthOff", month - currentMonth);
+                    editor.putInt("YearOff", year - currentYear);
+                    editor.putBoolean("Hemisphere", hemisphereVal);
 
 
-                editor.commit();
+                    editor.commit();
+                }
             }
         });
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -647,6 +702,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                     mask3 = temp.substring(8,12);
                     editor.putString("Friendcode", mask1 + "-" + mask2 + "-" + mask3);
                     textViewIDCARD.setText("Name: " + input1.getText().toString() + "\n\nIsland: " + input3.getText().toString() + "\n\nFriend Code: SW-" + mask1 + "-" + mask2 + "-" + mask3);
+                    islanderPostRepository.vFriendCode = "SW"+ "-" + mask1 + "-" + mask2 + "-" + mask3;
+                    islanderPostRepository.vIsland = input3.getText().toString();
+                    islanderPostRepository.vName = input1.getText().toString();
                 } else {
                     editor.putString("Friendcode", input2.getText().toString());
                     textViewIDCARD.setText("Name: " + input1.getText().toString() + "\n\nIsland: " + input3.getText().toString() + "\n\nFriend Code: SW-" + input2.getText().toString());
@@ -654,6 +712,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 editor.putString("Villager", input1.getText().toString());
                 editor.putString("Islandname", input3.getText().toString());
                 editor.commit();
+
+
 
 
 
@@ -666,6 +726,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
         });
         alertDialog.show();
+    }
+
+    private String getFriendCodeFormatted(String unformattedFriendCode){
+        return "";
     }
 
     private void chooseImage(){
@@ -690,6 +754,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
 
             editor.putString("imgPath",encodeToBase64(bitmap));
+            islanderPostRepository.uri_image = encodeToBase64(bitmap);
             editor.commit();
 
 
@@ -705,6 +770,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         immage.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] b = baos.toByteArray();
         String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        Log.d(TAG, "encodeToBase64: " + imageEncoded);
 
         Log.d("Image Log:", imageEncoded);
         return imageEncoded;

@@ -155,7 +155,7 @@
                 android:layout_marginRight="15dp">
 
                 <ImageView
-                    android:src="@drawable/crafting_icon"
+                    android:src="@drawable/person_ic"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="fitXY"/>
@@ -219,7 +219,7 @@
                         card_view:cardElevation="8dp"
                         android:layout_marginRight="15dp">
                         <ImageView
-                            android:src="@drawable/tailor_v2"
+                            android:src="@drawable/sharing_ic"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="fitXY"/>
