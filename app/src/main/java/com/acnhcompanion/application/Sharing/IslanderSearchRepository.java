@@ -19,7 +19,7 @@ public class IslanderSearchRepository implements IslandsAPI_GETAsync.Callback{
         islanders = new MutableLiveData<>();
         islanders.setValue(null);
         loadingStatus = new MutableLiveData<>();
-        loadingStatus.setValue(Status.SUCCESS);
+        loadingStatus.setValue(Status.LOADING);
     }
 
     public LiveData<List<Islander>> getIslandersOpen(){

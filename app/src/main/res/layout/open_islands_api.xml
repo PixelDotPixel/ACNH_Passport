@@ -8,12 +8,24 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/tv_error_box_sharing"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <ProgressBar
+                    android:id="@+id/pb_status_bar"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_island_list"
                     android:layout_width="match_parent"
