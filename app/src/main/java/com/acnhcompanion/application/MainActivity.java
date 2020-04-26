@@ -31,15 +31,21 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.acnhcompanion.application.Bugs.Bug;
 import com.acnhcompanion.application.Bugs.BugActivity;
+import com.acnhcompanion.application.Fish.Fish;
+import com.acnhcompanion.application.Fossils.Fossil;
 import com.acnhcompanion.application.Sharing.IslanderPostRepository;
 import com.acnhcompanion.application.Sharing.Islands_Activity;
+import com.acnhcompanion.application.data.CritterDataViewModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -47,14 +53,21 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
-public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, Search_Item_Adapter.onSearchLongClickedListener {
     //Functional Elements
     SharedPreferences sharedPreferences;
     IslanderPostRepository islanderPostRepository;
+    Search_Item_Adapter searchItemAdapter;
+    private CritterDataViewModel critterDataViewModel;
 
     //Stored Variables
     String uri_image;
@@ -64,19 +77,22 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     //Visual Elements/widgets
     CardView cvBanner;
+    CardView cvIDCard;
     CardView cvTop;
-    CardView cvBot;
-    CardView cvLong;
-    CardView cvSmall2;
+    CardView cvOpenIslands;
+    CardView cvJournal;
+    CardView cvShare;
     CardView cvClock;
-    CardView cvCrafting;
-    CardView cvTailor;
+    CardView cvSearch;
+
+    SearchView svSearchBar;
+    RecyclerView rvSearchContent;
 
     //Variables
     ColorDrawable green;
     ColorDrawable tan;
-    ColorDrawable tanIcon;
     ColorDrawable blue;
+    List<Search_Item> search_items;
 
 
 
@@ -90,11 +106,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        green = new ColorDrawable(Color.parseColor("#96e3af"));
+        green = new ColorDrawable(Color.parseColor("#b5ead7"));
         tan = new ColorDrawable(Color.parseColor("#f4ebe6"));
         blue = new ColorDrawable(Color.parseColor("#c2ffff"));
 
-        /*getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#014421")));*/
         sharedPreferences = getSharedPreferences("VillagerPrefs", MODE_PRIVATE);
 
         vName = sharedPreferences.getString("Villager", "");
@@ -125,6 +140,81 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             imageView.setImageBitmap(image);
         }
 
+        cvBanner = findViewById(R.id.cv_banner_title);
+        cvBanner.setBackground(new ColorDrawable(Color.TRANSPARENT));
+
+        cvIDCard = findViewById(R.id.tv_id_card);
+        cvIDCard.setCardBackgroundColor(tan.getColor());
+        cvIDCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialogEdit();
+            }
+        });
+        cvIDCard.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+
+                String sharedText = getSharedText();
+
+                intent.putExtra(Intent.EXTRA_TEXT, sharedText);
+                intent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(intent, null);
+                startActivity(shareIntent);
+
+                return false;
+            }
+        });
+
+        TextView textViewIDCARD = findViewById(R.id.tv_id);
+        textViewIDCARD.setText("Name: " + vName + "\n\nIsland: " + vIsland + "\n\nFriend Code: SW-" + vFriendCode);
+
+        CardView cardViewImage = findViewById(R.id.iv_id_card);
+        cardViewImage.setCardBackgroundColor(new ColorDrawable(Color.parseColor("#faeebb")).getColor());
+        cardViewImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                chooseImage();
+                return false;
+            }
+        });
+
+        cvOpenIslands = findViewById(R.id.cv_crafting);
+        cvOpenIslands.setCardBackgroundColor(tan.getColor());
+        cvOpenIslands.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, Islands_Activity.class);
+                startActivity(intent);
+            }
+        });
+
+        cvJournal = findViewById(R.id.journal_card);
+        cvJournal.setCardBackgroundColor(tan.getColor());
+        cvJournal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, BugActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        cvTop = findViewById(R.id.cv_top);
+        cvTop.setCardBackgroundColor(green.getColor());
+
+        cvShare = findViewById(R.id.cv_smallTailor);
+        cvShare.setCardBackgroundColor(tan.getColor());
+        cvShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                postAlertDialog();
+            }
+        });
+
         cvClock = findViewById(R.id.cv_smallClock);
         cvClock.setCardBackgroundColor(tan.getColor());
         cvClock.setOnClickListener(new View.OnClickListener() {
@@ -139,89 +229,89 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
         });
 
-        cvCrafting = findViewById(R.id.cv_crafting);
-        cvCrafting.setCardBackgroundColor(tan.getColor());
-        cvCrafting.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
+        cvSearch = findViewById(R.id.cv_search);
+        cvSearch.setCardBackgroundColor(tan.getColor());
+
+        searchItemAdapter = new Search_Item_Adapter(this, new ArrayList<Search_Item>(), this);
+
+        svSearchBar = findViewById(R.id.sv_search_box);
+        svSearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View view) {
-                /*String url = "https://nookpedia.com/designs";
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                startActivity(intent);*/
-                Intent intent = new Intent(MainActivity.this, Islands_Activity.class);
-                startActivity(intent);
+            public boolean onQueryTextSubmit(String query) {
+                final List<Search_Item> filteredItemsList = filter(search_items, query);
+                searchItemAdapter.replaceAll(filteredItemsList);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                final List<Search_Item> filteredItemsList = filter(search_items, query);
+                searchItemAdapter.replaceAll(filteredItemsList);
+                return true;
             }
         });
 
-        cvBanner = findViewById(R.id.cv_banner_title);
-        cvBanner.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        rvSearchContent = findViewById(R.id.rv_search_content);
+        rvSearchContent.setLayoutManager(new LinearLayoutManager(this));
+        rvSearchContent.setAdapter(searchItemAdapter);
+        critterDataViewModel = new ViewModelProvider(
+                this,
+                new ViewModelProvider.AndroidViewModelFactory(getApplication())
+        ).get(CritterDataViewModel.class);
 
-        cvTop = findViewById(R.id.cv_top);
-        cvTop.setCardBackgroundColor(green.getColor());
-
-        //cvBot = findViewById(R.id.cv_bottom);
-
-        //cvLong = findViewById(R.id.cv_tall);
-        //cvLong.setCardBackgroundColor(blue.getColor());
-
-
-        cvTailor = findViewById(R.id.cv_smallTailor);
-        cvTailor.setCardBackgroundColor(tan.getColor());
-        cvTailor.setOnClickListener(new View.OnClickListener() {
+        final Search_Item factory = new Search_Item();
+        search_items = new ArrayList<>();
+        critterDataViewModel.getBugs().observe(this, new Observer<List<Bug>>() {
             @Override
-            public void onClick(View view) {
-                postAlertDialog();
+            public void onChanged(List<Bug> bugs) {
+                Log.d(TAG, "onChanged: BUGSRECIEVED");
+                if(bugs != null) {
+                    List<Search_Item> search_items_temp = factory.Search_Item_BugList(bugs);
+                    if(search_items_temp != null){
+                        for(Search_Item item : search_items_temp){
+                            search_items.add(item);
+                        }
+                        //searchItemAdapter.updateSearchItemAdapter(search_items);
+                        //searchItemAdapter.add(search_items);
+                    }
+                }
             }
         });
 
-        TextView textViewIDCARD = findViewById(R.id.tv_id);
-        textViewIDCARD.setText("Name: " + vName + "\n\nIsland: " + vIsland + "\n\nFriend Code: SW-" + vFriendCode);
-
-        final CardView cardView = findViewById(R.id.tv_id_card);
-        cardView.setCardBackgroundColor(tan.getColor());
-        cardView.setOnClickListener(new View.OnClickListener() {
+        critterDataViewModel.getFish().observe(this, new Observer<List<Fish>>() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_SEND);
-
-                String sharedText = getSharedText();
-
-                intent.putExtra(Intent.EXTRA_TEXT, sharedText);
-                intent.setType("text/plain");
-
-                Intent shareIntent = Intent.createChooser(intent, null);
-                startActivity(shareIntent);
-            }
-        });
-        cardView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                alertDialogEdit();
-                return false;
+            public void onChanged(List<Fish> fish) {
+                Log.d(TAG, "onChanged: FISHRECIEVED");
+                if(fish != null) {
+                    List<Search_Item> search_items_temp = factory.Search_Item_FishList(fish);
+                    if(search_items_temp != null){
+                        for(Search_Item item : search_items_temp){
+                            search_items.add(item);
+                        }
+                        //searchItemAdapter.updateSearchItemAdapter(search_items);
+                        //searchItemAdapter.add(search_items);
+                    }
+                }
             }
         });
 
-        CardView cardViewImage = findViewById(R.id.iv_id_card);
-        cardViewImage.setCardBackgroundColor(new ColorDrawable(Color.parseColor("#faeebb")).getColor());
-        cardViewImage.setOnLongClickListener(new View.OnLongClickListener() {
+        critterDataViewModel.getFossilData().observe(this, new Observer<List<Fossil>>() {
             @Override
-            public boolean onLongClick(View view) {
-                chooseImage();
-                return false;
+            public void onChanged(List<Fossil> fossils) {
+                Log.d(TAG, "onChanged: FOSSILSRECIEVED");
+                if(fossils != null) {
+                    List<Search_Item> search_items_temp = factory.Search_Item_FossilList(fossils);
+                    if(search_items_temp != null){
+                        for(Search_Item item : search_items_temp){
+                            search_items.add(item);
+                        }
+                        //searchItemAdapter.add(search_items);
+                    }
+                }
             }
         });
 
-        CardView journalCard = findViewById(R.id.journal_card);
-        journalCard.setCardBackgroundColor(tan.getColor());
-        journalCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, BugActivity.class);
-                startActivity(intent);
-            }
-        });
+
     }
 
     String getSharedText(){
@@ -781,6 +871,24 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         //https://acpatterns.com/api.php?recent=1&nsfc=0&letsgetdangerous=0
         byte[] decodedByte = Base64.decode(toDecode, 0);
         return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+    }
+
+    private static List<Search_Item> filter(List<Search_Item> items, String query){
+        final String lowerQuery = query.toLowerCase();
+
+        final List<Search_Item> filteredList = new ArrayList<>();
+        for(Search_Item item : items){
+            final String text = item.critterName.toLowerCase();
+            if(text.contains(lowerQuery)){
+                filteredList.add(item);
+            }
+        }
+        return filteredList;
+    }
+
+    @Override
+    public void onSearchItemLongClicked(Search_Item item) {
+
     }
 
     @Override

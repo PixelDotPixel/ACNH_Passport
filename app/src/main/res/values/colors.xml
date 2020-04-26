@@ -2,8 +2,9 @@
 <resources>
     <color name="colorPrimary">#004E99</color>
     <color name="colorPrimaryDark">#004E99</color>
-    <color name="colorAccent">#DBC392</color>
+    <color name="colorAccent">#C2FFFF</color>
     <color name="deepOcean">#004E99</color>
+    <color name ="sharing_bg">#DCECD9</color>
     <color name = "nav_icon_tint">#DBC392</color>
     <color name = "nav_text_color">#DBC392</color>
 </resources>

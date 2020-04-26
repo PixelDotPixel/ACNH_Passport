@@ -1,5 +1,6 @@
 package com.acnhcompanion.application.Sharing;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +42,7 @@ public class Islands_Activity extends AppCompatActivity {
         islanderRV.setVisibility(View.INVISIBLE);
 
         islanderPB = findViewById(R.id.pb_status_bar);
+        islanderPB.setBackgroundColor(Color.WHITE);
         islanderPB.setVisibility(View.VISIBLE);
 
         islanderTV_Error = findViewById(R.id.tv_error_box_sharing);

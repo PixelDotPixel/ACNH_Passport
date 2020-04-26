@@ -150,9 +150,10 @@
                 android:id="@+id/cv_crafting"
                 android:layout_width="175dp"
                 android:layout_height="175dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
                 card_view:cardCornerRadius="8dp"
-                card_view:cardElevation="8dp"
-                android:layout_marginRight="15dp">
+                card_view:cardElevation="8dp">
 
                 <ImageView
                     android:src="@drawable/person_ic"
@@ -169,6 +170,8 @@
                 android:layout_toRightOf="@id/cv_crafting"
                 android:layout_width="175dp"
                 android:layout_height="175dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
                 card_view:cardCornerRadius="8dp"
                 card_view:cardElevation="8dp">
                 <ImageView
@@ -215,9 +218,10 @@
                         android:id="@+id/cv_smallTailor"
                         android:layout_width="175dp"
                         android:layout_height="175dp"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
                         card_view:cardCornerRadius="8dp"
-                        card_view:cardElevation="8dp"
-                        android:layout_marginRight="15dp">
+                        card_view:cardElevation="8dp">
                         <ImageView
                             android:src="@drawable/sharing_ic"
                             android:layout_width="match_parent"
@@ -232,6 +236,8 @@
                         android:layout_toRightOf="@id/cv_smallTailor"
                         android:layout_width="175dp"
                         android:layout_height="175dp"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
                         card_view:cardCornerRadius="8dp"
                         card_view:cardElevation="8dp">
                         <ImageView
@@ -247,73 +253,61 @@
             </androidx.cardview.widget.CardView>-->
         </RelativeLayout>
 
-        <!--<RelativeLayout
-            android:id="@+id/relative_layout5"
+
+        <RelativeLayout
+            android:id="@+id/relative_layout4"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="20dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:layout_height="200dp"
+            android:layout_height="575dp"
             android:layout_below="@+id/relative_layout3"
             >
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cv_bottom"
+                android:id="@+id/cv_search"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_gravity="center"
                 android:layout_centerInParent="true"
                 android:layout_width="375dp"
-                android:layout_height="175dp"
+                android:layout_height="575dp"
                 card_view:cardCornerRadius="8dp"
                 card_view:cardElevation="8dp">
-
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/iv_id_bottom_card"
-                        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                        android:layout_width="100dp"
-                        android:layout_height="150dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginLeft="10dp"
-                        card_view:cardCornerRadius="8dp">
-
-                        <ImageView
-                            android:id="@+id/iv_bottom_id"
+                        android:id="@+id/cv_search_box"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="350dp"
+                        android:layout_height="50dp"
+                        card_view:cardCornerRadius="25dp">
+                        <androidx.appcompat.widget.SearchView
+                            android:id="@+id/sv_search_box"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="fitXY"/>
-
+                            android:layout_height="match_parent"/>
                     </androidx.cardview.widget.CardView>
-
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/tv_id_bottom_card"
-                        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                        android:layout_width="275dp"
-                        android:layout_height="150dp"
-                        android:layout_centerInParent="true"
-                        android:layout_toRightOf="@+id/iv_id_bottom_card"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:id="@+id/cv_search_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/cv_search_box"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="350dp"
+                        android:layout_height="490dp"
                         card_view:cardCornerRadius="8dp">
-                        <TextView
-                            android:id="@+id/tv_id_bottom"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginLeft="4dp"/>
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_search_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
                     </androidx.cardview.widget.CardView>
-
 
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
-        </RelativeLayout>-->
+        </RelativeLayout>
     </RelativeLayout>
     </ScrollView>
 
