@@ -92,10 +92,10 @@ public class FossilAdapter extends RecyclerView.Adapter<FossilAdapter.FossilView
             fossilItemTitle.setText(spannableString);
             fossilItemTitle.setTextSize(20);
 
-            if(fossil.parentStructure != "NOSET") {
-                fossilItemDetails.setText("Value: " + fossil.bells + " Bells\n" + "Set: " + fossil.parentStructure);
+            if(!fossil.parentStructure.contains("NOSET")) {
+                fossilItemDetails.setText("\nValue: " + fossil.bells + " Bells\n\n" + "Set: " + fossil.parentStructure);
             } else {
-                fossilItemDetails.setText("Value: " + fossil.bells + " Bells\n");
+                fossilItemDetails.setText("\nValue: " + fossil.bells + " Bells\n");
             }
 
         }

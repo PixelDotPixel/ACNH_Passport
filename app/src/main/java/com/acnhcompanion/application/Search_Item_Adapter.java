@@ -1,19 +1,22 @@
 package com.acnhcompanion.application;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.acnhcompanion.application.R;
-import com.acnhcompanion.application.Search_Item;
+import com.acnhcompanion.application.Bugs.BugAdapter;
 
-import java.util.Comparator;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -21,9 +24,12 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
+
 public class Search_Item_Adapter extends RecyclerView.Adapter<Search_Item_Adapter.Search_Item_ViewHolder> {
     public List<Search_Item> search_Items;
-    public List<Search_Item> sorted_search_items;
+    SharedPreferences sharedPreferences;
     //private final Comparator<Search_Item> mComparator;
     public Context context;
     LayoutInflater inflater;
@@ -38,6 +44,7 @@ public class Search_Item_Adapter extends RecyclerView.Adapter<Search_Item_Adapte
         this.context = context;
         this.search_Items = search_items;
         //this.mSearchLongListener = listener;
+        sharedPreferences = context.getSharedPreferences("VillagerPrefs", MODE_PRIVATE);
         inflater = (LayoutInflater.from(context));
     }
 
@@ -51,7 +58,37 @@ public class Search_Item_Adapter extends RecyclerView.Adapter<Search_Item_Adapte
 
     @Override
     public void onBindViewHolder(@NonNull Search_Item_ViewHolder holder, int position) {
+        if(sortedList.get(position).critterType == "fish" || sortedList.get(position).critterType == "bug") {
+            String season = sortedList.get(position).northernSeason;
+            if (sharedPreferences.getBoolean("Hemisphere", true)) {
+                season = sortedList.get(position).northernSeason;
+            } else {
+                season = sortedList.get(position).southernSeason;
+            }
+            colorState(!isCatchable(sortedList.get(position).timeWindow, season), holder.iv_search_item);
+        } else {
+            colorState(false, holder.iv_search_item);
+        }
         holder.bind(sortedList.get(position));
+    }
+
+    private void colorState(Boolean value, ImageView imageView){
+        if(value){
+            setColor(imageView);
+        } else {
+            nullColor(imageView);
+        }
+    }
+
+    private void setColor(ImageView imageView){
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        imageView.setColorFilter(filter);
+    }
+
+    private void nullColor(ImageView imageView){
+        imageView.setColorFilter(null);
     }
 
     public void updateSearchItemAdapter(List<Search_Item> Search_Items){
@@ -93,6 +130,8 @@ public class Search_Item_Adapter extends RecyclerView.Adapter<Search_Item_Adapte
             tv_search_item.setText(search_item.critterName);
             cv_search_item.setCardBackgroundColor(Color.blue(1));
         }
+
+
     }
 
     //Search Functionality
@@ -164,5 +203,99 @@ public class Search_Item_Adapter extends RecyclerView.Adapter<Search_Item_Adapte
         }
         sortedList.addAll(items);
         sortedList.endBatchedUpdates();
+    }
+
+    boolean isCatchable(String toCheckTimes, String toCheckSeasons){
+        return isWithinTimeWindow(toCheckTimes) && isInSeason(toCheckSeasons);
+    }
+
+    boolean isWithinTimeWindow(String toCheck){
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        Date currentTime = Calendar.getInstance().getTime();
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(currentTime);
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendar.get(Calendar.MINUTE);
+        int hours;
+        boolean toSet = true;
+        hours = (currentHour + sharedPreferences.getInt("HourOff", 0));
+        if(toCheck.contains("All day")){
+            return true;
+        }
+
+        String[] bounds = toCheck.split("-");
+        for(int i = 0; i < bounds.length-1; i+=2){
+            int adderUpper = 0;
+            int adderLower = 0;
+            if(bounds[i].contains("p.m.")){
+                adderLower += 12;
+            }
+            if(bounds[i+1].contains("p.m.")){
+                adderUpper += 12;
+            }
+            String boundsUpper = bounds[i+1].replaceAll("\\D+", "");
+            String boundsLower = bounds[i].replaceAll("\\D+", "");
+            int upperBound = Integer.parseInt(boundsUpper) + adderUpper;
+            int lowerBound = Integer.parseInt(boundsLower) + adderLower;
+            if(upperBound < lowerBound){
+                if(hours >= lowerBound || hours < upperBound){
+                    return true;
+                }
+            } else {
+                if(hours >= lowerBound && hours < upperBound){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    boolean isInSeason(String toCheck){
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        Date currentTime = Calendar.getInstance().getTime();
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(currentTime);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int month;
+        month = (currentMonth + sharedPreferences.getInt("MonthOff", 0));
+
+        String temp = toCheck.split(" \\(Northern\\)| \\(Northern and Southern\\)| \\(Southern\\)")[0];
+        if(temp.contains("Year-round")){
+            return true;
+        }
+        String[] bounds = temp.split("-| ");
+        for(int i = 0; i < bounds.length-1; i += 2) {
+            String lowerBoundName = bounds[i];
+            String upperBoundName = bounds[i + 1];
+            Log.d(TAG, "isInSeason: " + upperBoundName + " " + lowerBoundName);
+            BugAdapter.Month upperBoundMonth = BugAdapter.Month.valueOf(upperBoundName);
+            BugAdapter.Month lowerboundMonth = BugAdapter.Month.valueOf(lowerBoundName);
+            Log.d(TAG, "isInSeason: ub: " + upperBoundMonth.ordinal() + " lb:" + lowerboundMonth.ordinal() + "\ncurrent month: " + month);
+            if (upperBoundMonth.ordinal() < lowerboundMonth.ordinal()) {
+                if (month >= lowerboundMonth.ordinal() || month < upperBoundMonth.ordinal()) {
+                    return true;
+                }
+            } else {
+                if (month >= lowerboundMonth.ordinal() && month < upperBoundMonth.ordinal()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public enum Month{
+        January,
+        February,
+        March,
+        April,
+        May,
+        June,
+        July,
+        August,
+        September,
+        October,
+        November,
+        December
     }
 }

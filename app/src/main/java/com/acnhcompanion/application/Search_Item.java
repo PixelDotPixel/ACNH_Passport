@@ -9,6 +9,11 @@ import java.util.List;
 
 public class Search_Item {
     public int imgID;
+    public String timeWindow;
+    public String northernSeason;
+    public String southernSeason;
+    public boolean isMuseum;
+    public boolean isCaught;
     public String critterName;
     public String critterType;
 
@@ -20,12 +25,18 @@ public class Search_Item {
         this.critterName = fish.name;
         this.critterType = "fish";
         this.imgID = fish.imgID;
+        this.northernSeason = fish.northernSeason;
+        this.southernSeason = fish.southernSeason;
+        this.timeWindow = fish.timeWindow;
     }
 
     public Search_Item(Bug bug){
         this.critterName = bug.name;
         this.critterType = "bug";
         this.imgID = bug.imgID;
+        this.northernSeason = bug.northernSeason;
+        this.southernSeason = bug.southernSeason;
+        this.timeWindow = bug.timeWindow;
     }
 
     public Search_Item(Fossil fossil){

@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/rl_search_item"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,11 +20,12 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             card_view:cardCornerRadius="8dp"
-            card_view:cardElevation="4dp">
+            card_view:cardElevation="2dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
 
                 <ImageView
                     android:id="@+id/iv_search_item"
@@ -32,13 +33,21 @@
                     android:layout_width="50dp"
                     android:paddingLeft="10dp"/>
 
-                <TextView
-                    android:id="@+id/tv_search_item"
+                <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/cv_search_item_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    card_view:cardCornerRadius="5dp"
+                    card_view:cardElevation="2dp"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/iv_search_item"
-                    />
+                    android:layout_toEndOf="@+id/iv_search_item">
+                    <TextView
+                        android:id="@+id/tv_search_item"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
+                </androidx.cardview.widget.CardView>
 
             </RelativeLayout>
         </androidx.cardview.widget.CardView>

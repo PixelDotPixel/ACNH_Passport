@@ -1,12 +1,8 @@
 package com.acnhcompanion.application;
-
-import android.Manifest;
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -117,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         vFriendCode = sharedPreferences.getString("Friendcode", "");
         uri_image = sharedPreferences.getString("imgPath", "");
 
-        islanderPostRepository = new IslanderPostRepository(vName, vIsland, vFriendCode, uri_image, "HELLO FROM THE APP");
+        islanderPostRepository = new IslanderPostRepository(vName, vIsland, vFriendCode, "", "HELLO FROM THE APP");
         islanderPostRepository.getStatus().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
@@ -845,7 +841,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
 
             editor.putString("imgPath",encodeToBase64(bitmap));
-            islanderPostRepository.uri_image = encodeToBase64(bitmap);
+            //islanderPostRepository.uri_image = encodeToBase64(bitmap);
+            islanderPostRepository.uri_image = "";
             editor.commit();
 
 
