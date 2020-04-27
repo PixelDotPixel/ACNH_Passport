@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,10 +31,13 @@ import static android.content.Context.MODE_PRIVATE;
 public class Search_Item_Adapter extends RecyclerView.Adapter<Search_Item_Adapter.Search_Item_ViewHolder> {
     public List<Search_Item> search_Items;
     SharedPreferences sharedPreferences;
-    //private final Comparator<Search_Item> mComparator;
     public Context context;
     LayoutInflater inflater;
     onSearchLongClickedListener mSearchLongListener;
+
+    ColorDrawable green;
+    ColorDrawable tan;
+    ColorDrawable blue;
 
     public interface onSearchLongClickedListener {
         void onSearchItemLongClicked(Search_Item item);
@@ -44,6 +48,9 @@ public class Search_Item_Adapter extends RecyclerView.Adapter<Search_Item_Adapte
         this.context = context;
         this.search_Items = search_items;
         //this.mSearchLongListener = listener;
+        green = new ColorDrawable(Color.parseColor("#b5ead7"));
+        tan = new ColorDrawable(Color.parseColor("#f4ebe6"));
+        blue = new ColorDrawable(Color.parseColor("#c2ffff"));
         sharedPreferences = context.getSharedPreferences("VillagerPrefs", MODE_PRIVATE);
         inflater = (LayoutInflater.from(context));
     }
@@ -129,6 +136,13 @@ public class Search_Item_Adapter extends RecyclerView.Adapter<Search_Item_Adapte
             iv_search_item.setImageResource(search_item.imgID);
             tv_search_item.setText(search_item.critterName);
             cv_search_item.setCardBackgroundColor(Color.blue(1));
+            if(search_item.critterType=="fish"){
+                cv_search_item.setCardBackgroundColor(blue.getColor());
+            } else if(search_item.critterType == "bug"){
+                cv_search_item.setCardBackgroundColor(green.getColor());
+            } else {
+                cv_search_item.setCardBackgroundColor(tan.getColor());
+            }
         }
 
 
