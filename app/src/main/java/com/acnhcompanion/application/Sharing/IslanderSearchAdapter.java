@@ -73,15 +73,19 @@ public class IslanderSearchAdapter extends RecyclerView.Adapter<IslanderSearchAd
     public class IslanderSearchViewHolder extends RecyclerView.ViewHolder {
         //private ImageView tile_icon;
         private CardView islandItemCard;
-        private TextView islandItemDetails;
+        private TextView islandItemFC;
+        private TextView islandItemVillagerName;
         private TextView islandItemTitle;
+        private TextView islandItemMessage;
 
         public IslanderSearchViewHolder(@NonNull View itemView) {
             super(itemView);
             //tile_icon = itemView.findViewById(R.id.icon_cvm_sharing);
-            islandItemDetails = itemView.findViewById(R.id.tv_island_details_sharing);
+            islandItemFC = itemView.findViewById(R.id.tv_island_details_sharing_friendcode);
+            islandItemVillagerName = itemView.findViewById(R.id.tv_island_details_sharing_islander);
             islandItemTitle = itemView.findViewById(R.id.tv_island_title_sharing);
             islandItemCard = itemView.findViewById(R.id.cv_id_card_sharing);
+            islandItemMessage = itemView.findViewById(R.id.tv_island_details_sharing_message);
         }
 
         void bind(Islander islander, int position){
@@ -103,7 +107,8 @@ public class IslanderSearchAdapter extends RecyclerView.Adapter<IslanderSearchAd
 //                tile_icon.setImageResource(R.drawable.missing_image_asset);
 //            }
             islandItemTitle.setText(spannableString);
-            islandItemDetails.setText("Friend Code: " + islander.Friend_code + "\n\n" + "Islander: " + islander.Islander + "\n\n" + islander.Message);
+            islandItemFC.setText("Friend Code: "+ islander.Friend_code);
+            islandItemVillagerName.setText("Islander: " + islander.Islander);
         }
 
 

@@ -77,10 +77,28 @@
                         android:layout_marginLeft="4dp" />
 
                     <TextView
-                        android:id="@+id/tv_island_details_sharing"
+                        android:id="@+id/tv_island_details_sharing_islander"
                         android:layout_below="@+id/tv_island_title_sharing"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginLeft="4dp"
+                        android:text=""/>
+
+                    <TextView
+                        android:id="@+id/tv_island_details_sharing_friendcode"
+                        android:layout_below="@+id/tv_island_details_sharing_islander"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginLeft="4dp"
+                        android:text=""/>
+
+                    <TextView
+                        android:id="@+id/tv_island_details_sharing_message"
+                        android:layout_below="@+id/tv_island_details_sharing_friendcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:layout_marginLeft="4dp"
                         android:text=""/>
